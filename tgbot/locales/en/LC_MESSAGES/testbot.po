@@ -1,0 +1,137 @@
+# English translations for PROJECT.
+# Copyright (C) 2023 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-03-25 13:12+0500\n"
+"PO-Revision-Date: 2023-03-25 13:21+0500\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+"Last-Translator: \n"
+"X-Generator: Poedit 2.2.4\n"
+
+#: handlers/user.py:21 handlers/user.py:140
+msgid "Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"
+msgstr "Welcome to the main menu. Get to know the departments! 👇"
+
+#: handlers/user.py:25
+msgid ""
+"Assalomu alaykum 👋\n"
+"Botimizga xush kelibsiz iltimos tilni tanlang!"
+msgstr ""
+"Hello 👋\n"
+"Welcome to our bot, please choose a language!"
+
+#: handlers/user.py:34
+msgid "Iltimos ismingizni kiriting 👤"
+msgstr "Please enter your name 👤"
+
+#: handlers/user.py:40
+msgid "Iltimos telefon raqamingizni kiriting yoki tugmacha orqali yuboring 📲"
+msgstr "Please enter your phone number or send via the button 📲"
+
+#: handlers/user.py:49 handlers/user.py:92
+msgid "Iltimos telefon raqamingizga kelgan sms kodni kiriting 📲"
+msgstr "Please enter the SMS code received on your phone number 📲"
+
+#: handlers/user.py:59
+msgid "Bosh menuga xush kelibsiz 👇"
+msgstr "Welcome to the main menu 👇"
+
+#: handlers/user.py:66 handlers/user.py:102
+msgid "Sozlamalar bo'limi 🛠:"
+msgstr "Settings section 🛠:"
+
+#: handlers/user.py:71
+msgid "Tilni tanlang!"
+msgstr "Choose your language!"
+
+#: handlers/user.py:78
+msgid "Til o'zgartirildi!"
+msgstr "Language has been changed!"
+
+#: handlers/user.py:84
+msgid "Iltimos telefon raqamingizni yuboring 📲"
+msgstr "Please send your phone number 📲"
+
+#: handlers/user.py:101
+msgid "Raqamingiz o'zgartirildi"
+msgstr "Language changed"
+
+#: handlers/user.py:111
+msgid "{text} bo'limi kategoriyalari 👇"
+msgstr "{text} section categories 👇"
+
+#: handlers/user.py:114
+msgid "Tovarlar qo'shilmagan ❌"
+msgstr "Goods not added ❌"
+
+#: handlers/user.py:120
+msgid "Modelni tanlang 👇"
+msgstr "Choose a model 👇"
+
+#: handlers/user.py:126
+msgid ""
+"{name}\n"
+"m'alumotlar:\n"
+"{descr}\n"
+"{price} so'm"
+msgstr ""
+"{name}\n"
+"information:\n"
+"{descr}\n"
+"{price} sum"
+
+#: handlers/user.py:134
+msgid ""
+"Tez orada operatorlarimiz\n"
+" siz bilan bog'lanadi 👨‍💻"
+msgstr ""
+"Soon our operators\n"
+"  will contact you 👨‍💻"
+
+#: keyboards/inline.py:7 keyboards/inline.py:21 keyboards/inline.py:26
+#: keyboards/inline.py:35
+msgid "🔙 Orqaga"
+msgstr "Back 🔙"
+
+#: keyboards/inline.py:11
+msgid "✅ Xarid qilish"
+msgstr "✅ Buy"
+
+#: keyboards/inline.py:19 keyboards/inline.py:24
+msgid "🔄 Tilni o'zgartirish"
+msgstr "🔄 Change language"
+
+#: keyboards/inline.py:20 keyboards/inline.py:25
+msgid "📞 Telefon raqamni o'zgartirish"
+msgstr "📞 Change phone number"
+
+#: keyboards/inline.py:44
+msgid "Siz uchun maxsus 🎁"
+msgstr "Special for you 🎁"
+
+#: keyboards/inline.py:45
+msgid "Sozlamalar ⚙️"
+msgstr "Settings ⚙️"
+
+#: keyboards/inline.py:61
+msgid ""
+"{name}\n"
+"{price} so'm"
+msgstr ""
+"{name}\n"
+"{price} sum"
+
+#: keyboards/reply.py:7
+msgid "Kontaktni yuborish 📱"
+msgstr "Send contact 📱"

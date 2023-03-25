@@ -30,7 +30,7 @@ async def settings_btns(locale=False):
 async def lang_btns(back):
     lang_btn = InlineKeyboardMarkup(row_with=1).add(InlineKeyboardButton("uz 🇺🇿", callback_data="languz"),
                                                     InlineKeyboardButton("ru 🇷🇺", callback_data="langru"),
-                                                    InlineKeyboardButton("ru 🇺🇸", callback_data="langen"))
+                                                    InlineKeyboardButton("en 🇺🇸", callback_data="langen"))
     if back:
         lang_btn.add(InlineKeyboardButton(_("🔙 Orqaga"), callback_data="back"))
     return lang_btn
