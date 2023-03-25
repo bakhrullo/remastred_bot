@@ -1,26 +1,24 @@
 from dataclasses import dataclass
+from pathlib import Path
 
 from environs import Env
 
 
 @dataclass
 class DbConfig:
-    host: str
-    password: str
-    user: str
-    database: str
+    database_url: str
 
 
 @dataclass
 class TgBot:
     token: str
-    admin_ids: list[int]
+    admin_ids: list
     use_redis: bool
 
 
 @dataclass
 class Miscellaneous:
-    other_params: str = None
+    sms_brock: str
 
 
 @dataclass
@@ -41,10 +39,15 @@ def load_config(path: str = None):
             use_redis=env.bool("USE_REDIS"),
         ),
         db=DbConfig(
-            host=env.str('DB_HOST'),
-            password=env.str('DB_PASS'),
-            user=env.str('DB_USER'),
-            database=env.str('DB_NAME')
+            database_url=env.str("DB_URL")
         ),
-        misc=Miscellaneous()
+        misc=Miscellaneous(
+            sms_brock=env.str("SMS_BROCK"),
+
+        )
     )
+
+
+I18N_DOMAIN = 'testbot'
+BASE_DIR = Path(__file__).parent
+LOCALES_DIR = BASE_DIR / 'locales'
