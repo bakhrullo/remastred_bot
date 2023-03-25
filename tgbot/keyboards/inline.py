@@ -48,7 +48,7 @@ async def main_menu_btns(cats, lang):
 
 
 async def cat_btns(cats, lang):
-    cat_btn = InlineKeyboardMarkup(row_width=1)
+    cat_btn = InlineKeyboardMarkup(row_width=1).insert(InlineKeyboardButton(_("Qidiruv 🔎"), callback_data="search"))
     for cat in cats:
         cat_btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
     cat_btn.insert(back_btn)
@@ -63,4 +63,12 @@ async def prod_btns(prods, lang):
                                              callback_data=prod['id']))
     prod_btn.insert(back_btn)
     return prod_btn
+
+
+async def search_btns(cats, lang):
+    cat_btn = InlineKeyboardMarkup(row_width=1)
+    for cat in cats:
+        cat_btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
+    cat_btn.insert(back_btn)
+    return cat_btn
 

@@ -54,3 +54,10 @@ async def get_prods(option, config):
     async with aiohttp.ClientSession() as session:
         async with session.get(url=f"{config.db.database_url}product/{option}") as response:
             return await response.json()
+
+
+async def get_prods_search(option, lang, config):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=f"{config.db.database_url}product/search", params={"option": option,
+                                                                                      "lang": lang}) as response:
+            return await response.json()

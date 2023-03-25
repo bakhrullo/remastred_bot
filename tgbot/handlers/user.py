@@ -3,12 +3,14 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.types import Message, CallbackQuery
 
-from tgbot.db.db_api import update_user, create_user, get_glob_cats, get_cats, get_prods, list_glob_cats, get_list_prods
+from tgbot.db.db_api import update_user, create_user, get_glob_cats, get_cats, get_prods, list_glob_cats, \
+    get_list_prods, get_prods_search
 from tgbot.filters.back import BackFilter
-from tgbot.keyboards.inline import lang_btns, main_menu_btns, settings_btns, cat_btns, prod_btns, buy_kb
+from tgbot.keyboards.inline import lang_btns, main_menu_btns, settings_btns, cat_btns, prod_btns, buy_kb, back_kb, \
+    search_btns
 from tgbot.keyboards.reply import contact_btn, remove_btn
 from tgbot.misc.i18n import i18ns
-from tgbot.misc.states import UserStartState, UserMenuState, UserSettings, UserBuyState
+from tgbot.misc.states import UserStartState, UserMenuState, UserSettings, UserBuyState, UserSearch
 from tgbot.services.code import send_code
 
 _ = i18ns.gettext
@@ -134,6 +136,23 @@ async def success(c: CallbackQuery):
     await c.message.edit_text(_("Tez orada operatorlarimiz\n siz bilan bog'lanadi 👨‍💻"))
 
 
+async def search(c: CallbackQuery):
+    await c.message.edit_text(_("Qidirayotgan mahsoltingizni kiriting 🔎"))
+    await UserSearch.get_name.set()
+
+
+async def get_search(m: Message, state: FSMContext, lang, config):
+    res = await get_prods_search(m.text, lang, config)
+    if len(res) == 0:
+        return await m.answer(_("Hech nima topilmadi ☹️"), reply_markup=back_kb)
+    else:
+        kb = await search_btns(res, lang)
+        await state.update_data(prod=res[0]["glob_cat"][f"name_{lang}"])
+        await UserBuyState.get_cat.set()
+        return await m.answer(_("{prod}ning turini tanlang").format(prod=res[0]["glob_cat"][f"name_{lang}"]),
+                              reply_markup=kb)
+
+
 async def back(c: CallbackQuery, lang, config):
     await c.message.delete()
     res = await list_glob_cats(config)
@@ -158,4 +177,6 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(get_cat, BackFilter(), state=UserBuyState.get_cat)
     dp.register_callback_query_handler(get_prod, BackFilter(), state=UserBuyState.get_prod)
     dp.register_callback_query_handler(success, BackFilter(), state=UserBuyState.get_conf)
+    dp.register_callback_query_handler(search, Text(equals="search"), state=UserBuyState.get_cat)
+    dp.register_message_handler(get_search, state=UserSearch.get_name)
     dp.register_callback_query_handler(back, Text(equals="back"), state="*")

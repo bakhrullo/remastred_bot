@@ -24,3 +24,6 @@ class UserBuyState(StatesGroup):
     get_prod = State()
     get_conf = State()
 
+
+class UserSearch(StatesGroup):
+    get_name = State()
