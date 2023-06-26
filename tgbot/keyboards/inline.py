@@ -11,23 +11,30 @@ buy_kb = InlineKeyboardMarkup(row_width=1).add(
     InlineKeyboardButton(_("✅ Xarid qilish"), callback_data="confirm"),
     back_btn)
 
+role_kb = InlineKeyboardMarkup(row_width=1).add(
+    InlineKeyboardButton(_("Ishlab chiqaruvchi 👷‍♀️"), callback_data="Ishlab chiqaruvchi"),
+    InlineKeyboardButton(_("O'rtakash 👨‍💻️"), callback_data="O'rtakash"),
+    InlineKeyboardButton(_("Xaridor  👨️"), callback_data="Xaridor"))
 
-async def settings_btns(locale=False):
+main_menu_kb = InlineKeyboardMarkup(row_width=2).add(
+    InlineKeyboardButton(_("Qidruv 🔎"), callback_data="search"),
+    InlineKeyboardButton(_("Xizmatlar (bonus) 🚚 "), callback_data="services"),
+    InlineKeyboardButton(_("Katalog 📖"), callback_data="catalog"),
+    InlineKeyboardButton(_("Sozlamalar ⚙️"), callback_data="settings"),
+    InlineKeyboardButton(_("Izoh qoldirish ✏"), callback_data="feedback"),
+)
+
+
+def settings_btns(locale=None):
     settings_kb = InlineKeyboardMarkup(row_width=1)
-    if locale:
-        settings_kb.add(
-            InlineKeyboardButton(_("🔄 Tilni o'zgartirish", locale=locale), callback_data="change_lang"),
-            InlineKeyboardButton(_("📞 Telefon raqamni o'zgartirish", locale=locale), callback_data="change_phone"),
-            InlineKeyboardButton(_("🔙 Orqaga", locale=locale), callback_data="back"))
-    else:
-        settings_kb.add(
-            InlineKeyboardButton(_("🔄 Tilni o'zgartirish"), callback_data="change_lang"),
-            InlineKeyboardButton(_("📞 Telefon raqamni o'zgartirish"), callback_data="change_phone"),
-            InlineKeyboardButton(_("🔙 Orqaga"), callback_data="back"))
+    settings_kb.add(
+        InlineKeyboardButton(_("🔄 Tilni o'zgartirish", locale=locale), callback_data="change_lang"),
+        InlineKeyboardButton(_("📞 Telefon raqamni o'zgartirish", locale=locale), callback_data="change_phone"),
+        InlineKeyboardButton(_("🔙 Orqaga", locale=locale), callback_data="back"))
     return settings_kb
 
 
-async def lang_btns(back):
+def lang_btns(back):
     lang_btn = InlineKeyboardMarkup(row_with=1).add(InlineKeyboardButton("uz 🇺🇿", callback_data="languz"),
                                                     InlineKeyboardButton("ru 🇷🇺", callback_data="langru"),
                                                     InlineKeyboardButton("en 🇺🇸", callback_data="langen"))
@@ -36,18 +43,18 @@ async def lang_btns(back):
     return lang_btn
 
 
-async def main_menu_btns(cats, lang):
+def main_menu_btns(cats, lang):
     main_menu_btn = InlineKeyboardMarkup(row_width=1)
     for cat in cats:
         main_menu_btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
     main_menu_btn.add(
-            InlineKeyboardButton(_("Siz uchun maxsus 🎁"), callback_data="contact"),
-            InlineKeyboardButton(_("Sozlamalar ⚙️"), callback_data="settings")
-            )
+        InlineKeyboardButton(_("Siz uchun maxsus 🎁"), callback_data="contact"),
+        InlineKeyboardButton(_("Sozlamalar ⚙️"), callback_data="settings")
+    )
     return main_menu_btn
 
 
-async def cat_btns(cats, lang):
+def cat_btns(cats, lang):
     cat_btn = InlineKeyboardMarkup(row_width=1).insert(InlineKeyboardButton(_("Qidiruv 🔎"), callback_data="search"))
     for cat in cats:
         cat_btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
@@ -55,7 +62,7 @@ async def cat_btns(cats, lang):
     return cat_btn
 
 
-async def prod_btns(prods, lang):
+def prod_btns(prods, lang):
     prod_btn = InlineKeyboardMarkup(row_width=1)
     for prod in prods:
         prod_btn.insert(InlineKeyboardButton(_("{name}\n{price} so'm").format(name=prod[f'name_{lang}'],
@@ -65,10 +72,9 @@ async def prod_btns(prods, lang):
     return prod_btn
 
 
-async def search_btns(cats, lang):
+def search_btns(cats, lang):
     cat_btn = InlineKeyboardMarkup(row_width=1)
     for cat in cats:
         cat_btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
     cat_btn.insert(back_btn)
     return cat_btn
-

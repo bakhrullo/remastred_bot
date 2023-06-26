@@ -10,6 +10,7 @@ class UserStartState(StatesGroup):
     get_name = State()
     get_contact = State()
     get_code = State()
+    get_role = State()
 
 
 class UserSettings(StatesGroup):
@@ -17,6 +18,10 @@ class UserSettings(StatesGroup):
     get_lang = State()
     get_contact = State()
     get_code = State()
+
+
+class UserFeedback(StatesGroup):
+    get_feedback = State()
 
 
 class UserBuyState(StatesGroup):

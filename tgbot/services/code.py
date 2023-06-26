@@ -14,6 +14,6 @@ async def send_code(number, config):
     async with aiohttp.ClientSession() as session:
         async with session.post(url=config.misc.sms_brock,
                                 auth=aiohttp.BasicAuth('bestbrok', 'tM4!-hmV52Z@'),
-                                json=sms_data) as response:
-            print(response)
+                                json=sms_data):
+            pass
     return rand_int

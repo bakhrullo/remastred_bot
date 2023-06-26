@@ -7,19 +7,14 @@ async def get_user(user_id, config):
             return await response.json()
 
 
-async def create_user(name, tg_id, lang, phone, config):
+async def create_user(tg_id, lang, config):
     async with aiohttp.ClientSession() as session:
         async with session.post(url=f"{config.db.database_url}user/create/",
-                                data={"name": name, "tg_id": tg_id, "lang": lang, "phone": phone}) as response:
+                                data={"tg_id": tg_id, "lang": lang}) as response:
             return await response.json()
 
 
-async def update_user(user_id, config, lang=False, phone=False,):
-    data = {}
-    if phone:
-        data["phone"] = phone
-    if lang:
-        data["lang"] = lang
+async def update_user(user_id, config, data):
     async with aiohttp.ClientSession() as session:
         async with session.patch(url=f"{config.db.database_url}user/update/{user_id}",
                                  data=data) as response:
@@ -60,4 +55,10 @@ async def get_prods_search(option, lang, config):
     async with aiohttp.ClientSession() as session:
         async with session.get(url=f"{config.db.database_url}product/search", params={"option": option,
                                                                                       "lang": lang}) as response:
+            return await response.json()
+
+
+async def get_services(config):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=f'{config.db.database_url}brock/get') as response:
             return await response.json()

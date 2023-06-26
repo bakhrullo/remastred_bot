@@ -3,42 +3,51 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.types import Message, CallbackQuery
 
-from tgbot.db.db_api import update_user, create_user, get_glob_cats, get_cats, get_prods, list_glob_cats, \
+from tgbot.db.db_api import update_user, get_cats, get_prods, list_glob_cats, \
     get_list_prods, get_prods_search
 from tgbot.filters.back import BackFilter
-from tgbot.keyboards.inline import lang_btns, main_menu_btns, settings_btns, cat_btns, prod_btns, buy_kb, back_kb, \
-    search_btns
+from tgbot.keyboards.inline import lang_btns, settings_btns, cat_btns, prod_btns, buy_kb, back_kb, \
+    search_btns, role_kb, main_menu_kb
 from tgbot.keyboards.reply import contact_btn, remove_btn
 from tgbot.misc.i18n import i18ns
-from tgbot.misc.states import UserStartState, UserMenuState, UserSettings, UserBuyState, UserSearch
+from tgbot.misc.states import UserStartState, UserMenuState, UserSettings, UserBuyState, UserSearch, UserFeedback
 from tgbot.services.code import send_code
 
 _ = i18ns.gettext
 __ = i18ns.lazy_gettext
 
 
-async def user_start(m: Message, status, config, lang):
+async def user_start(m: Message, status, user):
     if status:
-        res = await list_glob_cats(config)
-        await m.answer(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
-                       reply_markup=await main_menu_btns(res, lang))
-        await UserMenuState.get_menu.set()
+        if user["name"] is None:
+            await m.answer(_("Iltimos ismingizni kiriting 👤"))
+            await UserStartState.get_name.set()
+        elif user["phone"] is None:
+            await m.answer(_("Iltimos telefon raqamingizni kiriting yoki tugmacha orqali yuboring 📲"),
+                           reply_markup=contact_btn)
+            await UserStartState.get_contact.set()
+        elif user["role"] is None:
+            await m.answer(_("O'z sohangizni tanlang 👇"), reply_markup=role_kb)
+            await UserStartState.get_role.set()
+        else:
+            await m.answer(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
+                           reply_markup=main_menu_kb)
+            await UserMenuState.get_menu.set()
     else:
         await m.reply(_("Assalomu alaykum 👋\nBotimizga xush kelibsiz iltimos tilni tanlang!"),
-                      reply_markup=await lang_btns(False))
+                      reply_markup=lang_btns(False))
         await UserStartState.get_lang.set()
 
 
-async def get_lang(c: CallbackQuery, state: FSMContext, config):
+async def get_lang(c: CallbackQuery, config):
     lang = c.data.replace("lang", "")
-    await state.update_data(lang=lang)
-    await update_user(user_id=c.from_user.id, lang=lang, config=config)
+    await update_user(user_id=c.from_user.id, config=config, data={"lang": lang})
     await c.message.edit_text(_("Iltimos ismingizni kiriting 👤", locale=lang))
     await UserStartState.next()
 
 
-async def get_name(m: Message, state: FSMContext):
-    await state.update_data(name=m.text)
+async def get_name(m: Message, config):
+    await update_user(user_id=m.from_user.id, config=config, data={"name": m.text})
     await m.answer(_("Iltimos telefon raqamingizni kiriting yoki tugmacha orqali yuboring 📲"),
                    reply_markup=contact_btn)
     await UserStartState.next()
@@ -52,32 +61,59 @@ async def get_contact(m: Message, state: FSMContext, config):
     await UserStartState.next()
 
 
-async def get_code(m: Message, state: FSMContext, config, lang):
-    code = m.text
-    data = await state.get_data()
-    if code == str(data['code']):
-        res = await list_glob_cats(config)
-        await create_user(data["name"], m.from_user.id, data["lang"], data["phone"], config)
-        await m.answer(_("Bosh menuga xush kelibsiz 👇"), reply_markup=await main_menu_btns(res, lang))
+async def get_code(m: Message, state: FSMContext, config):
+    data, code = await state.get_data(), m.text
+    if code == str(data["code"]):
+        await update_user(user_id=m.from_user.id, config=config, data={"phone": data["phone"]})
+        await m.answer(_("O'z sohangizni tanlang 👇"), reply_markup=role_kb)
         await UserMenuState.get_menu.set()
     else:
         await m.answer("Notog'ri kod yuborildi ❌\nIltimos qayta urinib ko'ring! 🔄")
 
 
+async def get_role(c: CallbackQuery, config):
+    await update_user(user_id=c.from_user.id, config=config, data={"role": c.data})
+    await c.message.edit_text(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
+                              reply_markup=main_menu_kb)
+    await UserMenuState.get_menu.set()
+
+
+async def feedback(c: CallbackQuery):
+    await c.message.edit_text(
+        "Bu bo'limda siz bizga izoh yozib qoldirishingiz mumkin, biz izoh bilan tanishib chiqib siz bilan bog'lanamiz ⏳",
+        reply_markup=back_kb)
+    await UserFeedback.get_feedback.set()
+
+
+async def get_feedback(m: Message, user, config):
+    await m.bot.send_message(chat_id=config.tg_bot.channel_id, text=f"👤 Ism: {user['name']}\n"
+                                                                    f"📱 Raqam: {user['phone']}\n"
+                                                                    f"💬 Izoh: {m.text}")
+    await m.answer("Izohingiz uchun rahmat!", reply_markup=main_menu_kb)
+    await UserMenuState.get_menu.set()
+
+
+async def bonus(c: CallbackQuery):
+    await
+    await c.message.edit_text(
+        "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing �")
+
+
+
 async def settings(c: CallbackQuery):
-    await c.message.edit_text(_("Sozlamalar bo'limi 🛠:"), reply_markup=await settings_btns())
+    await c.message.edit_text(_("Sozlamalar bo'limi 🛠:"), reply_markup=settings_btns())
     await UserSettings.choose.set()
 
 
 async def change_lang(c: CallbackQuery):
-    await c.message.edit_text(_("Tilni tanlang!"), reply_markup=await lang_btns(True))
+    await c.message.edit_text(_("Tilni tanlang!"), reply_markup=lang_btns(True))
     await UserSettings.get_lang.set()
 
 
-async def get_lang_set(c: CallbackQuery, state: FSMContext, config):
+async def get_lang_set(c: CallbackQuery, config):
     lang = c.data.replace("lang", "")
-    await update_user(user_id=c.from_user.id, lang=lang, config=config)
-    await c.message.edit_text(_("Til o'zgartirildi!", locale=lang), reply_markup=await settings_btns(lang))
+    await update_user(user_id=c.from_user.id, data={"lang": lang}, config=config)
+    await c.message.edit_text(_("Til o'zgartirildi!", locale=lang), reply_markup=settings_btns(lang))
     await UserSettings.choose.set()
 
 
@@ -96,12 +132,11 @@ async def get_phone_set(m: Message, state: FSMContext, config):
 
 
 async def get_code_set(m: Message, state: FSMContext, config):
-    code = m.text
-    data = await state.get_data()
+    data, code = await state.get_data(), m.text
     if code == str(data['code']):
-        await update_user(m.from_user.id, config, data["phone"])
+        await update_user(m.from_user.id, config, {"phone": data["phone"]})
         await m.answer(_("Raqamingiz o'zgartirildi"), reply_markup=remove_btn)
-        await m.answer(_("Sozlamalar bo'limi 🛠:"), reply_markup=await settings_btns())
+        await m.answer(_("Sozlamalar bo'limi 🛠:"), reply_markup=settings_btns())
         await UserSettings.choose.set()
     else:
         await m.answer("Notog'ri kod yuborildi ❌\nIltimos qayta urinib ko'ring! 🔄")
@@ -111,7 +146,7 @@ async def cats(c: CallbackQuery, lang, config):
     res = await get_cats(config, c.data)
     try:
         await c.message.edit_text(_("{text} bo'limi kategoriyalari 👇").format(text=res[0]["glob_cat"][f"name_{lang}"]),
-                                  reply_markup=await cat_btns(res, lang))
+                                  reply_markup=cat_btns(res, lang))
     except:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
     await UserBuyState.get_cat.set()
@@ -119,7 +154,7 @@ async def cats(c: CallbackQuery, lang, config):
 
 async def get_cat(c: CallbackQuery, lang, config):
     res = await get_list_prods(c.data, config)
-    await c.message.edit_text(_("Modelni tanlang 👇"), reply_markup=await prod_btns(res, lang))
+    await c.message.edit_text(_("Modelni tanlang 👇"), reply_markup=prod_btns(res, lang))
     await UserBuyState.next()
 
 
@@ -153,11 +188,10 @@ async def get_search(m: Message, state: FSMContext, lang, config):
                               reply_markup=kb)
 
 
-async def back(c: CallbackQuery, lang, config):
+async def back(c: CallbackQuery):
     await c.message.delete()
-    res = await list_glob_cats(config)
     await c.message.answer(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
-                              reply_markup=await main_menu_btns(res, lang))
+                           reply_markup=main_menu_kb)
     await UserMenuState.get_menu.set()
 
 
@@ -167,7 +201,10 @@ def register_user(dp: Dispatcher):
     dp.register_message_handler(get_name, state=UserStartState.get_name)
     dp.register_message_handler(get_contact, content_types="contact", state=UserStartState.get_contact)
     dp.register_message_handler(get_code, state=UserStartState.get_code)
+    dp.register_callback_query_handler(get_role, state=UserStartState.get_role)
     dp.register_callback_query_handler(settings, Text(equals="settings"), state=UserMenuState.get_menu)
+    dp.register_callback_query_handler(feedback, Text(equals="feedback"), state=UserMenuState.get_menu)
+    dp.register_message_handler(get_feedback, state=UserFeedback.get_feedback)
     dp.register_callback_query_handler(change_lang, Text(equals="change_lang"), state=UserSettings.choose)
     dp.register_callback_query_handler(get_lang_set, BackFilter(), state=UserSettings.get_lang)
     dp.register_callback_query_handler(change_phone, Text(equals="change_phone"), state=UserSettings.choose)
