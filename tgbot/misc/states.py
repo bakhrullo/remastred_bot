@@ -20,14 +20,19 @@ class UserSettings(StatesGroup):
     get_code = State()
 
 
+class UserBonus(StatesGroup):
+    get_brock = State()
+    get_region = State()
+
+
 class UserFeedback(StatesGroup):
     get_feedback = State()
 
 
-class UserBuyState(StatesGroup):
+class UserCatalogState(StatesGroup):
     get_cat = State()
     get_prod = State()
-    get_conf = State()
+    get_analog = State()
 
 
 class UserSearch(StatesGroup):

@@ -21,21 +21,9 @@ async def update_user(user_id, config, data):
             return await response.json()
 
 
-async def list_glob_cats(config):
+async def get_cats(config):
     async with aiohttp.ClientSession() as session:
-        async with session.get(url=f"{config.db.database_url}glob_category/") as response:
-            return await response.json()
-
-
-async def get_glob_cats(config, option):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url=f"{config.db.database_url}glob_category/{option}") as response:
-            return await response.json()
-
-
-async def get_cats(config, option):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url=f"{config.db.database_url}category/", params={"option": option}) as response:
+        async with session.get(url=f"{config.db.database_url}category/") as response:
             return await response.json()
 
 
@@ -58,7 +46,27 @@ async def get_prods_search(option, lang, config):
             return await response.json()
 
 
-async def get_services(config):
+async def get_brocks(config):
     async with aiohttp.ClientSession() as session:
         async with session.get(url=f'{config.db.database_url}brock/get') as response:
+            return await response.json()
+
+
+async def get_regions(config):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=f'{config.db.database_url}region/get') as response:
+            return await response.json()
+
+
+async def get_services(config, **kwargs):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=f'{config.db.database_url}service/get', params={"brock": kwargs["brock"],
+                                                                                   "region": kwargs["region"]}) \
+                as response:
+            return await response.json()
+
+
+async def get_analogs(config, prod_id):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=f'{config.db.database_url}analog', params={"prod_id": prod_id}) as response:
             return await response.json()

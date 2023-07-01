@@ -3,14 +3,15 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.types import Message, CallbackQuery
 
-from tgbot.db.db_api import update_user, get_cats, get_prods, list_glob_cats, \
-    get_list_prods, get_prods_search
+from tgbot.db.db_api import update_user, get_cats, get_prods, get_list_prods, get_prods_search, get_services, \
+    get_regions, get_brocks, get_analogs
 from tgbot.filters.back import BackFilter
-from tgbot.keyboards.inline import lang_btns, settings_btns, cat_btns, prod_btns, buy_kb, back_kb, \
-    search_btns, role_kb, main_menu_kb
+from tgbot.keyboards.inline import lang_btns, settings_btns, prod_btns, back_kb, role_kb, main_menu_kb, \
+    kb_constructor, analog_kb
 from tgbot.keyboards.reply import contact_btn, remove_btn
 from tgbot.misc.i18n import i18ns
-from tgbot.misc.states import UserStartState, UserMenuState, UserSettings, UserBuyState, UserSearch, UserFeedback
+from tgbot.misc.states import UserStartState, UserMenuState, UserSettings, UserSearch, UserFeedback, UserBonus, \
+    UserCatalogState
 from tgbot.services.code import send_code
 
 _ = i18ns.gettext
@@ -66,7 +67,7 @@ async def get_code(m: Message, state: FSMContext, config):
     if code == str(data["code"]):
         await update_user(user_id=m.from_user.id, config=config, data={"phone": data["phone"]})
         await m.answer(_("O'z sohangizni tanlang 👇"), reply_markup=role_kb)
-        await UserMenuState.get_menu.set()
+        await UserStartState.next()
     else:
         await m.answer("Notog'ri kod yuborildi ❌\nIltimos qayta urinib ko'ring! 🔄")
 
@@ -79,8 +80,8 @@ async def get_role(c: CallbackQuery, config):
 
 
 async def feedback(c: CallbackQuery):
-    await c.message.edit_text(
-        "Bu bo'limda siz bizga izoh yozib qoldirishingiz mumkin, biz izoh bilan tanishib chiqib siz bilan bog'lanamiz ⏳",
+    await c.message.edit_text(_(
+        "Bu bo'limda siz bizga izoh yozib qoldirishingiz mumkin, biz izoh bilan tanishib chiqib siz bilan bog'lanamiz ⏳"),
         reply_markup=back_kb)
     await UserFeedback.get_feedback.set()
 
@@ -89,15 +90,38 @@ async def get_feedback(m: Message, user, config):
     await m.bot.send_message(chat_id=config.tg_bot.channel_id, text=f"👤 Ism: {user['name']}\n"
                                                                     f"📱 Raqam: {user['phone']}\n"
                                                                     f"💬 Izoh: {m.text}")
-    await m.answer("Izohingiz uchun rahmat!", reply_markup=main_menu_kb)
+    await m.answer(_("Izohingiz uchun rahmat!"), reply_markup=main_menu_kb)
     await UserMenuState.get_menu.set()
 
 
-async def bonus(c: CallbackQuery):
-    await
-    await c.message.edit_text(
-        "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing �")
+async def bonus(c: CallbackQuery, config, lang):
+    res = await get_brocks(config)
+    await c.message.edit_text(_(
+        "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi "
+        "xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"),
+        reply_markup=kb_constructor(cats=res, lang=lang))
+    await UserBonus.get_brock.set()
 
+
+async def get_brock(c: CallbackQuery, state: FSMContext, config, lang):
+    res = await get_regions(config)
+    await state.update_data(brock=c.data)
+    await c.message.edit_text(_("Viloyatingizni tanlang"), reply_markup=kb_constructor(res, lang))
+    await UserBonus.next()
+
+
+async def get_region(c: CallbackQuery, state: FSMContext, config, lang):
+    data = await state.get_data()
+    res = await get_services(config=config, brock=data["brock"], region=c.data)
+    if len(res) == 0:
+        return await c.answer(_("Ma'lumotlar topilmadi"))
+    txt = ""
+    for i in res:
+        print(i)
+        txt += f"👤: {i['name']}\n" \
+               f"📱: {i['phone']}\n" \
+               f"⚖️: {i['weight']}\n\n"
+    await c.message.edit_text(txt, reply_markup=back_kb)
 
 
 async def settings(c: CallbackQuery):
@@ -143,32 +167,40 @@ async def get_code_set(m: Message, state: FSMContext, config):
 
 
 async def cats(c: CallbackQuery, lang, config):
-    res = await get_cats(config, c.data)
-    try:
-        await c.message.edit_text(_("{text} bo'limi kategoriyalari 👇").format(text=res[0]["glob_cat"][f"name_{lang}"]),
-                                  reply_markup=cat_btns(res, lang))
-    except:
+    res = await get_cats(config)
+    if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
-    await UserBuyState.get_cat.set()
+    await c.message.edit_text(_("Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
+                                "toifasi bo'yicha topishingiz mumkin 📃"), reply_markup=kb_constructor(res, lang))
+    await UserCatalogState.get_cat.set()
 
 
 async def get_cat(c: CallbackQuery, lang, config):
     res = await get_list_prods(c.data, config)
     await c.message.edit_text(_("Modelni tanlang 👇"), reply_markup=prod_btns(res, lang))
-    await UserBuyState.next()
+    await UserCatalogState.next()
 
 
 async def get_prod(c: CallbackQuery, lang, config):
     res = await get_prods(c.data, config)
-    await c.message.edit_text(_("{name}\nm'alumotlar:\n{descr}\n{price} so'm").format(name=res[f'name_{lang}'],
-                                                                                      descr=res[f'descr_{lang}'],
-                                                                                      price=res['price']),
-                              reply_markup=buy_kb)
-    await UserBuyState.next()
+    await c.message.edit_text(_("🆔 Mahsulot nomi: {name}\n📍 Viloyat/hudud: {region}\n💰 Narxi: {price}\n"
+                                "📞Telefon raqam: {phone}\n💬 Opisaniya: {descr}").format(name=res[f"name_{lang}"],
+                                                                                        region=res['region']
+                                                                                        [f'name_{lang}'],
+                                                                                        price=res["price"],
+                                                                                        phone=res["phone"],
+                                                                                        descr=res[f"descr_{lang}"]),
+                              reply_markup=analog_kb(c.data))
+    await UserCatalogState.next()
 
 
-async def success(c: CallbackQuery):
-    await c.message.edit_text(_("Tez orada operatorlarimiz\n siz bilan bog'lanadi 👨‍💻"))
+async def get_analog(c: CallbackQuery, config, lang):
+    res = await get_analogs(config, c.data)
+    if len(res) == 0:
+        return await c.answer(_("Analoglar topilmadi 😔"))
+    await c.message.edit_text(_("Modelni {count} ta analogi topildi 👇").format(count=len(res)),
+                              reply_markup=prod_btns(res, lang))
+    await UserCatalogState.get_prod.set()
 
 
 async def search(c: CallbackQuery):
@@ -176,16 +208,14 @@ async def search(c: CallbackQuery):
     await UserSearch.get_name.set()
 
 
-async def get_search(m: Message, state: FSMContext, lang, config):
+async def get_search(m: Message, lang, config):
     res = await get_prods_search(m.text, lang, config)
     if len(res) == 0:
         return await m.answer(_("Hech nima topilmadi ☹️"), reply_markup=back_kb)
-    else:
-        kb = await search_btns(res, lang)
-        await state.update_data(prod=res[0]["glob_cat"][f"name_{lang}"])
-        await UserBuyState.get_cat.set()
-        return await m.answer(_("{prod}ning turini tanlang").format(prod=res[0]["glob_cat"][f"name_{lang}"]),
-                              reply_markup=kb)
+    await m.answer(_("Qidiruvingiz bo'yicha {count} ta mahsulot topildi: 🔎 ular bilan tanishing: 👇").
+                   format(count=len(res)), reply_markup=prod_btns(res, lang))
+    await UserCatalogState.get_prod.set()
+
 
 
 async def back(c: CallbackQuery):
@@ -204,16 +234,20 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(get_role, state=UserStartState.get_role)
     dp.register_callback_query_handler(settings, Text(equals="settings"), state=UserMenuState.get_menu)
     dp.register_callback_query_handler(feedback, Text(equals="feedback"), state=UserMenuState.get_menu)
+    dp.register_callback_query_handler(bonus, Text(equals="services"), state=UserMenuState.get_menu)
+    dp.register_callback_query_handler(get_brock, BackFilter(), state=UserBonus.get_brock)
+    dp.register_callback_query_handler(get_region, BackFilter(), state=UserBonus.get_region)
     dp.register_message_handler(get_feedback, state=UserFeedback.get_feedback)
     dp.register_callback_query_handler(change_lang, Text(equals="change_lang"), state=UserSettings.choose)
     dp.register_callback_query_handler(get_lang_set, BackFilter(), state=UserSettings.get_lang)
     dp.register_callback_query_handler(change_phone, Text(equals="change_phone"), state=UserSettings.choose)
     dp.register_message_handler(get_phone_set, content_types="contact", state=UserSettings.get_contact)
     dp.register_message_handler(get_code_set, state=UserSettings.get_code)
-    dp.register_callback_query_handler(cats, state=UserMenuState.get_menu)
-    dp.register_callback_query_handler(get_cat, BackFilter(), state=UserBuyState.get_cat)
-    dp.register_callback_query_handler(get_prod, BackFilter(), state=UserBuyState.get_prod)
-    dp.register_callback_query_handler(success, BackFilter(), state=UserBuyState.get_conf)
-    dp.register_callback_query_handler(search, Text(equals="search"), state=UserBuyState.get_cat)
+    dp.register_callback_query_handler(cats, Text(equals="catalog"), state=UserMenuState.get_menu)
+    dp.register_callback_query_handler(get_cat, BackFilter(), state=UserCatalogState.get_cat)
+    dp.register_callback_query_handler(get_prod, BackFilter(), state=UserCatalogState.get_prod)
+    dp.register_callback_query_handler(get_prod, BackFilter(), state=UserCatalogState.get_prod)
+    dp.register_callback_query_handler(get_analog, BackFilter(), state=UserCatalogState.get_analog)
+    dp.register_callback_query_handler(search, Text(equals="search"), state=UserMenuState.get_menu)
     dp.register_message_handler(get_search, state=UserSearch.get_name)
     dp.register_callback_query_handler(back, Text(equals="back"), state="*")

@@ -7,10 +7,6 @@ _ = i18ns.lazy_gettext
 back_btn = InlineKeyboardButton(_("🔙 Orqaga"), callback_data="back")
 back_kb = InlineKeyboardMarkup().add(back_btn)
 
-buy_kb = InlineKeyboardMarkup(row_width=1).add(
-    InlineKeyboardButton(_("✅ Xarid qilish"), callback_data="confirm"),
-    back_btn)
-
 role_kb = InlineKeyboardMarkup(row_width=1).add(
     InlineKeyboardButton(_("Ishlab chiqaruvchi 👷‍♀️"), callback_data="Ishlab chiqaruvchi"),
     InlineKeyboardButton(_("O'rtakash 👨‍💻️"), callback_data="O'rtakash"),
@@ -54,27 +50,27 @@ def main_menu_btns(cats, lang):
     return main_menu_btn
 
 
-def cat_btns(cats, lang):
-    cat_btn = InlineKeyboardMarkup(row_width=1).insert(InlineKeyboardButton(_("Qidiruv 🔎"), callback_data="search"))
-    for cat in cats:
-        cat_btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
-    cat_btn.insert(back_btn)
-    return cat_btn
-
-
 def prod_btns(prods, lang):
     prod_btn = InlineKeyboardMarkup(row_width=1)
     for prod in prods:
-        prod_btn.insert(InlineKeyboardButton(_("{name}\n{price} so'm").format(name=prod[f'name_{lang}'],
-                                                                              price=prod['price']),
+        prod_btn.insert(InlineKeyboardButton(_("{name} ({region}) narx: {price} so'm").format(name=prod[f'name_{lang}'],
+                                                                                              region=prod['region'][f'name_{lang}'],
+                                                                                              price=prod['price']),
                                              callback_data=prod['id']))
     prod_btn.insert(back_btn)
     return prod_btn
 
 
-def search_btns(cats, lang):
-    cat_btn = InlineKeyboardMarkup(row_width=1)
+def kb_constructor(cats, lang):
+    btn = InlineKeyboardMarkup(row_width=1)
+
     for cat in cats:
-        cat_btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
-    cat_btn.insert(back_btn)
-    return cat_btn
+        btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
+    btn.insert(back_btn)
+    return btn
+
+
+def analog_kb(prod_id):
+    return InlineKeyboardMarkup(row_width=1).add(
+        InlineKeyboardButton(_("Analoglar 🗄"), callback_data=prod_id),
+        back_btn)

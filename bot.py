@@ -16,7 +16,7 @@ from tgbot.middlewares.environment import EnvironmentMiddleware
 from tgbot.misc.i18n import i18ns
 
 logger = logging.getLogger(__name__)
-DEBUG = False
+DEBUG = True
 
 
 def register_all_middlewares(dp, config):
