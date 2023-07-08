@@ -129,7 +129,6 @@ msgstr ""
 "💬 Description: {descr}"
 
 #: handlers/user.py:200
-#, fuzzy
 msgid "Analoglar topilmadi 😔"
 msgstr "Not found ☹️"
 
@@ -168,7 +167,6 @@ msgid "Xaridor  👨️"
 msgstr "Buyer 👨️"
 
 #: keyboards/inline.py:16
-#, fuzzy
 msgid "Qidruv 🔎"
 msgstr "Search 🔎"
 

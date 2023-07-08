@@ -55,7 +55,10 @@ async def get_name(m: Message, config):
 
 
 async def get_contact(m: Message, state: FSMContext, config):
-    phone = m.contact.phone_number
+    if m.content_type == "contact":
+        phone = m.contact.phone_number
+    else:
+        phone = m.text
     code = await send_code(phone, config)
     await state.update_data(code=code, phone=phone)
     await m.answer(_("Iltimos telefon raqamingizga kelgan sms kodni kiriting 📲"), reply_markup=remove_btn)
@@ -229,7 +232,7 @@ def register_user(dp: Dispatcher):
     dp.register_message_handler(user_start, commands=["start"], state="*")
     dp.register_callback_query_handler(get_lang, state=UserStartState.get_lang)
     dp.register_message_handler(get_name, state=UserStartState.get_name)
-    dp.register_message_handler(get_contact, content_types="contact", state=UserStartState.get_contact)
+    dp.register_message_handler(get_contact, content_types=["contact", "text"], state=UserStartState.get_contact)
     dp.register_message_handler(get_code, state=UserStartState.get_code)
     dp.register_callback_query_handler(get_role, state=UserStartState.get_role)
     dp.register_callback_query_handler(settings, Text(equals="settings"), state=UserMenuState.get_menu)
