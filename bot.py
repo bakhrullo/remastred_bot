@@ -13,6 +13,7 @@ from tgbot.handlers.echo import register_echo
 from tgbot.handlers.user import register_user
 from tgbot.middlewares.acl import ACLMiddleware
 from tgbot.middlewares.environment import EnvironmentMiddleware
+from tgbot.misc.bot_set_cmds import set_default_commands
 from tgbot.misc.i18n import i18ns
 
 logger = logging.getLogger(__name__)
@@ -50,6 +51,8 @@ async def main():
     dp = Dispatcher(bot, storage=storage)
 
     bot['config'] = config
+
+    await set_default_commands(dp)
 
     register_all_middlewares(dp, config)
     register_all_filters(dp)

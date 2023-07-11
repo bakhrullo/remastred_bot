@@ -7,35 +7,34 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-07-01 16:50+0500\n"
+"POT-Creation-Date: 2023-07-11 11:32+0500\n"
 "PO-Revision-Date: 2023-07-01 17:21+0500\n"
 "Last-Translator: \n"
-"Language-Team: en <LL@li.org>\n"
 "Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.9.1\n"
-"X-Generator: Poedit 3.3.2\n"
 
-#: handlers/user.py:24 handlers/user.py:46
+#: handlers/user.py:24 handlers/user.py:50
 msgid "Iltimos ismingizni kiriting 👤"
 msgstr "Please enter your name 👤"
 
-#: handlers/user.py:27 handlers/user.py:52
+#: handlers/user.py:27 handlers/user.py:56
 msgid "Iltimos telefon raqamingizni kiriting yoki tugmacha orqali yuboring 📲"
 msgstr "Please enter your phone number or send via the button 📲"
 
-#: handlers/user.py:31 handlers/user.py:69
+#: handlers/user.py:31 handlers/user.py:76
 msgid "O'z sohangizni tanlang 👇"
 msgstr "Choose your direction 👇"
 
-#: handlers/user.py:34 handlers/user.py:77 handlers/user.py:223
+#: handlers/user.py:37 handlers/user.py:84 handlers/user.py:306
 msgid "Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"
 msgstr "Welcome to the main menu. Get to know the departments! 👇"
 
-#: handlers/user.py:38
+#: handlers/user.py:42
 msgid ""
 "Assalomu alaykum 👋\n"
 "Botimizga xush kelibsiz iltimos tilni tanlang!"
@@ -43,11 +42,11 @@ msgstr ""
 "Hello 👋\n"
 "Welcome to our bot, please choose a language!"
 
-#: handlers/user.py:61 handlers/user.py:154
+#: handlers/user.py:68 handlers/user.py:191
 msgid "Iltimos telefon raqamingizga kelgan sms kodni kiriting 📲"
 msgstr "Please enter the SMS code received on your phone number 📲"
 
-#: handlers/user.py:83
+#: handlers/user.py:91 handlers/user.py:98
 msgid ""
 "Bu bo'limda siz bizga izoh yozib qoldirishingiz mumkin, biz izoh bilan "
 "tanishib chiqib siz bilan bog'lanamiz ⏳"
@@ -55,14 +54,14 @@ msgstr ""
 "In this section, you can write us a comment, we will contact you after "
 "getting acquainted with the comment ⏳"
 
-#: handlers/user.py:93
+#: handlers/user.py:108
 msgid "Izohingiz uchun rahmat!"
 msgstr "Thanks for your comment!"
 
-#: handlers/user.py:99
+#: handlers/user.py:117 handlers/user.py:128
 msgid ""
-"Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda "
-"siz mushkulingizni yengil qiluvchi xizmat turlarining raqamlari va ular "
+"Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda"
+" siz mushkulingizni yengil qiluvchi xizmat turlarining raqamlari va ular "
 "haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"
 msgstr ""
 "You are in the services section! This section is considered a separate "
@@ -70,54 +69,62 @@ msgstr ""
 "information about the services that will ease your problem. Get to know "
 "them 👇"
 
-#: handlers/user.py:109
+#: handlers/user.py:141
 msgid "Viloyatingizni tanlang"
 msgstr "Select your region"
 
-#: handlers/user.py:117
+#: handlers/user.py:149
 msgid "Ma'lumotlar topilmadi"
 msgstr "No data found"
 
-#: handlers/user.py:128 handlers/user.py:163
+#: handlers/user.py:160 handlers/user.py:165 handlers/user.py:200
 msgid "Sozlamalar bo'limi 🛠:"
 msgstr "Settings section 🛠:"
 
-#: handlers/user.py:133
+#: handlers/user.py:170
 msgid "Tilni tanlang!"
 msgstr "Choose your language!"
 
-#: handlers/user.py:140
+#: handlers/user.py:177
 msgid "Til o'zgartirildi!"
 msgstr "Language has been changed!"
 
-#: handlers/user.py:146
+#: handlers/user.py:183
 msgid "Iltimos telefon raqamingizni yuboring 📲"
 msgstr "Please send your phone number 📲"
 
-#: handlers/user.py:162
+#: handlers/user.py:199
 msgid "Raqamingiz o'zgartirildi"
 msgstr "Language changed"
 
-#: handlers/user.py:172
+#: handlers/user.py:209 handlers/user.py:222
 msgid "Tovarlar qo'shilmagan ❌"
 msgstr "Goods not added ❌"
 
-#: handlers/user.py:173
+#: handlers/user.py:213 handlers/user.py:225
 msgid ""
 "Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan "
 "mahsulotni toifasi bo'yicha topishingiz mumkin 📃"
 msgstr ""
-"Welcome to the catalog section. Here you can find the product you need by "
-"category 📃"
+"Welcome to the catalog section. Here you can find the product you need by"
+" category 📃"
 
-#: handlers/user.py:180
-msgid "Modelni tanlang 👇"
+#: handlers/user.py:236 handlers/user.py:246
+#, fuzzy
+msgid "Bo'limi tanlang 👇"
 msgstr "Choose a model 👇"
 
-#: handlers/user.py:186
+#: handlers/user.py:254
+#, fuzzy
+msgid "Bo'limni tanlang 👇"
+msgstr "Choose a model 👇"
+
+#: handlers/user.py:261
+#, fuzzy
 msgid ""
 "🆔 Mahsulot nomi: {name}\n"
 "📍 Viloyat/hudud: {region}\n"
+"🏙 Ishlab chiqarilgan: {made_in}\n"
 "💰 Narxi: {price}\n"
 "📞Telefon raqam: {phone}\n"
 "💬 Opisaniya: {descr}"
@@ -128,26 +135,26 @@ msgstr ""
 "📞Phone number: {phone}\n"
 "💬 Description: {descr}"
 
-#: handlers/user.py:200
+#: handlers/user.py:276
 msgid "Analoglar topilmadi 😔"
 msgstr "Not found ☹️"
 
-#: handlers/user.py:201
+#: handlers/user.py:277
 msgid "Modelni {count} ta analogi topildi 👇"
 msgstr "Found {count} analogues of the model 👇"
 
-#: handlers/user.py:207
+#: handlers/user.py:284 handlers/user.py:289
 msgid "Qidirayotgan mahsoltingizni kiriting 🔎"
 msgstr "Enter the product you are looking for 🔎"
 
-#: handlers/user.py:214
+#: handlers/user.py:296
 msgid "Hech nima topilmadi ☹️"
 msgstr "Not found ☹️"
 
-#: handlers/user.py:215
+#: handlers/user.py:297
 msgid ""
-"Qidiruvingiz bo'yicha {count} ta mahsulot topildi: 🔎 ular bilan tanishing: "
-"👇"
+"Qidiruvingiz bo'yicha {count} ta mahsulot topildi: 🔎 ular bilan "
+"tanishing: 👇"
 msgstr "Your search found {count} products: 🔎 get to know them: 👇"
 
 #: keyboards/inline.py:7 keyboards/inline.py:29 keyboards/inline.py:38
@@ -202,7 +209,7 @@ msgstr "Special for you 🎁"
 msgid "{name} ({region}) narx: {price} so'm"
 msgstr "{name} ({region}) price: {price} sum"
 
-#: keyboards/inline.py:75
+#: keyboards/inline.py:74
 msgid "Analoglar 🗄"
 msgstr "Analogs 🗄"
 
@@ -239,3 +246,4 @@ msgstr "Send contact 📱"
 
 #~ msgid "✅ Xarid qilish"
 #~ msgstr "✅ Buy"
+

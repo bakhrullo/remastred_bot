@@ -21,9 +21,10 @@ async def update_user(user_id, config, data):
             return await response.json()
 
 
-async def get_cats(config):
+async def get_cats(config, option="False", cat_id="False"):
     async with aiohttp.ClientSession() as session:
-        async with session.get(url=f"{config.db.database_url}category/") as response:
+        async with session.get(url=f"{config.db.database_url}category/",
+                               params={'option': option, 'cat_id': cat_id}) as response:
             return await response.json()
 
 
@@ -69,4 +70,10 @@ async def get_services(config, **kwargs):
 async def get_analogs(config, prod_id):
     async with aiohttp.ClientSession() as session:
         async with session.get(url=f'{config.db.database_url}analog', params={"prod_id": prod_id}) as response:
+            return await response.json()
+
+
+async def get_image(config, option):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=f'{config.db.database_url}images/{option}') as response:
             return await response.json()

@@ -54,7 +54,7 @@ def prod_btns(prods, lang):
     prod_btn = InlineKeyboardMarkup(row_width=1)
     for prod in prods:
         prod_btn.insert(InlineKeyboardButton(_("{name} ({region}) narx: {price} so'm").format(name=prod[f'name_{lang}'],
-                                                                                              region=prod['region'][f'name_{lang}'],
+                                                                                              region=prod['made_in'],
                                                                                               price=prod['price']),
                                              callback_data=prod['id']))
     prod_btn.insert(back_btn)
@@ -63,7 +63,6 @@ def prod_btns(prods, lang):
 
 def kb_constructor(cats, lang):
     btn = InlineKeyboardMarkup(row_width=1)
-
     for cat in cats:
         btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
     btn.insert(back_btn)

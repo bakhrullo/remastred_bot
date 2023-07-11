@@ -30,7 +30,9 @@ class UserFeedback(StatesGroup):
 
 
 class UserCatalogState(StatesGroup):
+    get_glob_cat = State()
     get_cat = State()
+    get_sub_cat = State()
     get_prod = State()
     get_analog = State()
 
