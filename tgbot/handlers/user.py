@@ -306,8 +306,33 @@ async def get_search(m: Message, lang, config):
     if len(res) == 0:
         return await m.answer(_("Hech nima topilmadi ☹️"), reply_markup=back_kb)
     await m.answer(_("Qidiruvingiz bo'yicha {count} ta mahsulot topildi: 🔎 ular bilan tanishing: 👇").
-                   format(count=len(res)), reply_markup=prod_btns(res, lang))
-    await UserCatalogState.get_prod.set()
+                   format(count=len(res)), reply_markup=prod_btns(res, lang, "back"))
+    await UserSearch.next()
+
+
+async def get_prod_search(c: CallbackQuery, lang, config, state: FSMContext):
+    res = await get_prods(c.data, config)
+    await state.update_data(prod_id=c.data)
+    await c.message.edit_text(
+        _("🆔 Mahsulot nomi: {name}\n📍 Viloyat/hudud: {region}\n🏙 Ishlab chiqarilgan: {made_in}\n💰 Narxi: {price}\n"
+          "📞Telefon raqam: {phone}\n💬 Opisaniya: {descr}").format(name=res[f"name_{lang}"],
+                                                                  region=res["region"]
+                                                                  [f'name_{lang}'],
+                                                                  made_in=res["made_in"],
+                                                                  price=res["price"],
+                                                                  phone=res["phone"],
+                                                                  descr=res[f"descr_{lang}"]),
+        reply_markup=analog_kb(c.data, "back"))
+    await UserSearch.next()
+
+
+async def get_analog_search(c: CallbackQuery, config, lang):
+    res = await get_analogs(config, c.data)
+    if len(res) == 0:
+        return await c.answer(_("Analoglar topilmadi 😔"))
+    await c.message.edit_text(_("Modelni {count} ta analogi topildi 👇").format(count=len(res)),
+                              reply_markup=prod_btns(res, lang, "back"))
+    await UserSearch.get_prod.set()
 
 
 async def back(c: CallbackQuery, config, lang, state: FSMContext):
@@ -319,7 +344,7 @@ async def back(c: CallbackQuery, config, lang, state: FSMContext):
             photo=img["image"],
             caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
             reply_markup=main_menu_kb)
-        await UserMenuState.get_menu.set()
+        return await UserMenuState.get_menu.set()
     elif c.data == "back_glob":
         res, img = await get_cats(config, "glob"), await get_image(config, "Bosh kategoriya")
         await c.message.answer_photo(
@@ -374,7 +399,9 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(get_cat, BackFilter(), state=UserCatalogState.get_cat)
     dp.register_callback_query_handler(get_sub_cat, BackFilter(), state=UserCatalogState.get_sub_cat)
     dp.register_callback_query_handler(get_prod, BackFilter(), state=UserCatalogState.get_prod)
+    dp.register_callback_query_handler(get_prod_search, BackFilter(), state=UserSearch.get_prod)
     dp.register_callback_query_handler(get_analog, BackFilter(), state=UserCatalogState.get_analog)
+    dp.register_callback_query_handler(get_analog_search, BackFilter(), state=UserSearch.get_analog)
     dp.register_callback_query_handler(search, Text(equals="search"), state=UserMenuState.get_menu)
     dp.register_message_handler(get_search, state=[UserSearch.get_name, UserCatalogState.get_prod])
     dp.register_callback_query_handler(back, Text(startswith="back"), state="*")
