@@ -10,6 +10,6 @@ class BackFilter(BoundFilter):
         self.is_back = is_back
 
     async def check(self, c: CallbackQuery):
-        if c.data == 'back' or c.data == 'search':
+        if c.data.startswith('back') or c.data == 'search':
             return False
         return True

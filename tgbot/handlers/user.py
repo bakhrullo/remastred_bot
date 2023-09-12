@@ -31,7 +31,7 @@ async def user_start(m: Message, status, user, config):
             await m.answer(_("O'z sohangizni tanlang 👇"), reply_markup=role_kb)
             await UserStartState.get_role.set()
         else:
-            res = await get_image(config, "Bosh menu")
+            img = await get_image(config, "Bosh menu")
             await m.answer_photo(
                 photo='https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg',
                 caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
@@ -113,7 +113,7 @@ async def bonus(c: CallbackQuery, config, lang):
     res, img = await get_brocks(config), await get_image(config, "Xizmatlar")
     await c.message.delete()
     await c.message.answer_photo(
-        photo="https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg",
+        photo=img["image"],
         caption=_(
             "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi "
             "xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"),
@@ -124,7 +124,7 @@ async def bonus(c: CallbackQuery, config, lang):
 async def bonus_cmd(m: Message, config, lang):
     res, img = await get_brocks(config), await get_image(config, "Xizmatlar")
     await m.answer_photo(
-        photo="https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg",
+        photo=img["image"],
         caption=_(
             "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi "
             "xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"),
@@ -137,7 +137,7 @@ async def get_brock(c: CallbackQuery, state: FSMContext, config, lang):
     await state.update_data(brock=c.data)
     await c.message.delete()
     await c.message.answer_photo(
-        photo="https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg",
+        photo=res["image"],
         caption=_("Viloyatingizni tanlang"), reply_markup=kb_constructor(res, lang))
     await UserBonus.next()
 
@@ -204,12 +204,12 @@ async def get_code_set(m: Message, state: FSMContext, config):
 
 
 async def cats(c: CallbackQuery, lang, config):
-    res, img = await get_cats(config, "glob"), await get_image(config, "Bosh kategoriya	")
+    res, img = await get_cats(config, "glob"), await get_image(config, "Bosh kategoriya")
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
     await c.message.delete()
     await c.message.answer_photo(
-        photo="https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg",
+        photo=img["image"],
         caption=_(
             "Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
             "toifasi bo'yicha topishingiz mumkin 📃"), reply_markup=kb_constructor(res, lang))
@@ -217,46 +217,57 @@ async def cats(c: CallbackQuery, lang, config):
 
 
 async def cats_cmd(m: Message, lang, config):
+    text = _("Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
+             "toifasi bo'yicha topishingiz mumkin 📃")
     res, img = await get_cats(config, "glob"), await get_image(config, "Bosh kategoriya	")
     if len(res) == 0:
         return await m.answer(_("Tovarlar qo'shilmagan ❌"), reply_markup=back_kb)
     await m.answer_photo(
-        photo="https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg",
-        caption=_(
-            "Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
-            "toifasi bo'yicha topishingiz mumkin 📃"), reply_markup=kb_constructor(res, lang))
+        photo=img["image"],
+        caption=text, reply_markup=kb_constructor(res, lang))
     await UserCatalogState.get_glob_cat.set()
 
 
-async def get_glob_cat(c: CallbackQuery, lang, config):
+async def get_glob_cat(c: CallbackQuery, lang, config, state: FSMContext):
+    await state.update_data(glob_cat_id=c.data)
+    text = _("Bo'limi tanlang 👇")
     res, img = await get_cats(config, "cat", c.data), await get_image(config, "Kategoriya")
+    if len(res) == 0:
+        return await c.answer(_("Tovarlar qo'shilmagan ❌"))
     await c.message.delete()
     await c.message.answer_photo(
-        photo="https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg",
-        caption=_("Bo'limi tanlang 👇"),
-        reply_markup=kb_constructor(res, lang))
+        photo=img["image"],
+        caption=text,
+        reply_markup=kb_constructor(res, lang, "back_glob"))
     await UserCatalogState.next()
 
 
-async def get_cat(c: CallbackQuery, lang, config):
+async def get_cat(c: CallbackQuery, lang, config, state: FSMContext):
     res, img = await get_cats(config, "sub", c.data), await get_image(config, "Kichik kategoriya")
+    await state.update_data(cat_id=c.data)
+    if len(res) == 0:
+        return await c.answer(_("Tovarlar qo'shilmagan ❌"))
     await c.message.delete()
     await c.message.answer_photo(
-        photo="https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg",
+        photo=img["image"],
         caption=_("Bo'limi tanlang 👇"),
-        reply_markup=kb_constructor(res, lang))
+        reply_markup=kb_constructor(res, lang, "back_cat"))
     await UserCatalogState.next()
 
 
-async def get_sub_cat(c: CallbackQuery, lang, config):
+async def get_sub_cat(c: CallbackQuery, lang, config, state: FSMContext):
     res = await get_list_prods(c.data, config)
+    await state.update_data(sub_cat_id=c.data)
+    if len(res) == 0:
+        return await c.answer(_("Tovarlar qo'shilmagan ❌"))
     await c.message.delete()
     await c.message.answer(_("Bo'limni tanlang 👇"), reply_markup=prod_btns(res, lang))
     await UserCatalogState.next()
 
 
-async def get_prod(c: CallbackQuery, lang, config):
+async def get_prod(c: CallbackQuery, lang, config, state: FSMContext):
     res = await get_prods(c.data, config)
+    await state.update_data(prod_id=c.data)
     await c.message.edit_text(
         _("🆔 Mahsulot nomi: {name}\n📍 Viloyat/hudud: {region}\n🏙 Ishlab chiqarilgan: {made_in}\n💰 Narxi: {price}\n"
           "📞Telefon raqam: {phone}\n💬 Opisaniya: {descr}").format(name=res[f"name_{lang}"],
@@ -299,13 +310,40 @@ async def get_search(m: Message, lang, config):
     await UserCatalogState.get_prod.set()
 
 
-async def back(c: CallbackQuery):
+async def back(c: CallbackQuery, config, lang, state: FSMContext):
     await c.message.delete()
-    await c.message.answer_photo(
-        photo="https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg",
-        caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
-        reply_markup=main_menu_kb)
-    await UserMenuState.get_menu.set()
+    data = await state.get_data()
+    if c.data == "back":
+        img = await get_image(config, "Bosh menu")
+        await c.message.answer_photo(
+            photo=img["image"],
+            caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
+            reply_markup=main_menu_kb)
+        await UserMenuState.get_menu.set()
+    elif c.data == "back_glob":
+        res, img = await get_cats(config, "glob"), await get_image(config, "Bosh kategoriya")
+        await c.message.answer_photo(
+            photo=img["image"],
+            caption=_(
+                "Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
+                "toifasi bo'yicha topishingiz mumkin 📃"), reply_markup=kb_constructor(res, lang))
+    elif c.data == "back_cat":
+        text = _("Bo'limi tanlang 👇")
+        res, img = await get_cats(config, "cat", data["glob_cat_id"]), await get_image(config, "Kategoriya")
+        await c.message.answer_photo(
+            photo=img["image"],
+            caption=text,
+            reply_markup=kb_constructor(res, lang, "back_glob"))
+    elif c.data == "back_sub":
+        res, img = await get_cats(config, "sub", data["cat_id"]), await get_image(config, "Kichik kategoriya")
+        await c.message.answer_photo(
+            photo=img["image"],
+            caption=_("Bo'limi tanlang 👇"),
+            reply_markup=kb_constructor(res, lang, "back_cat"))
+    elif c.data == "back_prod":
+        res = await get_list_prods(data["sub_cat_id"], config)
+        await c.message.answer(_("Bo'limni tanlang 👇"), reply_markup=prod_btns(res, lang))
+    await UserCatalogState.previous()
 
 
 def register_user(dp: Dispatcher):
@@ -338,5 +376,5 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(get_prod, BackFilter(), state=UserCatalogState.get_prod)
     dp.register_callback_query_handler(get_analog, BackFilter(), state=UserCatalogState.get_analog)
     dp.register_callback_query_handler(search, Text(equals="search"), state=UserMenuState.get_menu)
-    dp.register_message_handler(get_search, state=UserSearch.get_name)
-    dp.register_callback_query_handler(back, Text(equals="back"), state="*")
+    dp.register_message_handler(get_search, state=[UserSearch.get_name, UserCatalogState.get_prod])
+    dp.register_callback_query_handler(back, Text(startswith="back"), state="*")
