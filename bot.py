@@ -18,7 +18,7 @@ from tgbot.misc.bot_set_cmds import set_default_commands
 from tgbot.misc.i18n import i18ns
 
 logger = logging.getLogger(__name__)
-DEBUG = False
+DEBUG = True
 
 
 def register_all_middlewares(dp, config, redis):
@@ -47,7 +47,7 @@ async def main():
     logger.info("Starting bot")
     config = load_config(".env")
 
-    redis = aioredis.from_url("redis://localhost")
+    redis = aioredis.from_url("redis://localhost", decode_responses=True)
     storage = RedisStorage2() if config.tg_bot.use_redis else MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(bot, storage=storage)
