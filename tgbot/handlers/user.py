@@ -19,7 +19,7 @@ __ = i18ns.lazy_gettext
 
 
 async def user_start(m: Message, status, user, config):
-    if status:
+    if status == "found":
         if user["name"] is None:
             await m.answer(_("Iltimos ismingizni kiriting 👤"))
             await UserStartState.get_name.set()
@@ -37,16 +37,16 @@ async def user_start(m: Message, status, user, config):
                 caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
                 reply_markup=main_menu_kb)
             await UserMenuState.get_menu.set()
-    else:
-
+    elif status == "created":
         await m.answer(_("Assalomu alaykum 👋\nBotimizga xush kelibsiz iltimos tilni tanlang!"),
                        reply_markup=lang_btns(False))
         await UserStartState.get_lang.set()
 
 
-async def get_lang(c: CallbackQuery, config):
+async def get_lang(c: CallbackQuery, config, redis):
     lang = c.data.replace("lang", "")
     await update_user(user_id=c.from_user.id, config=config, data={"lang": lang})
+    await redis.set(c.from_user.id, lang)
     await c.message.edit_text(_("Iltimos ismingizni kiriting 👤", locale=lang))
     await UserStartState.next()
 
