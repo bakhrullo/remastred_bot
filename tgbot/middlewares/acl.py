@@ -9,7 +9,7 @@ class ACLMiddleware(BaseMiddleware):
         redis = data['redis']
         user_cache = await redis.get(user.id)
         if user_cache:
-            return data.update({'status': "cached", 'lang': user_cache['lang']})
+            return data.update({'status': "cached", 'lang': user_cache})
         user_loc = await get_user(user.id, data['config'])
         if 'detail' in user_loc:
             await create_user(user.id, user.language_code, data['config'])
