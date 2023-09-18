@@ -204,7 +204,7 @@ async def get_code_set(m: Message, state: FSMContext, config):
 
 
 async def cats(c: CallbackQuery, lang, config):
-    res = await get_cats(config, "glob"), ##await get_image(config, "Bosh kategoriya")
+    res = await get_cats(config, "glob") ##await get_image(config, "Bosh kategoriya")
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
     await c.message.delete()
@@ -231,7 +231,7 @@ async def cats_cmd(m: Message, lang, config):
 async def get_glob_cat(c: CallbackQuery, lang, config, state: FSMContext):
     await state.update_data(glob_cat_id=c.data)
     text = _("Bo'limi tanlang 👇")
-    res = await get_cats(config, "cat", c.data), #await get_image(config, "Bosh kategoriya")
+    res = await get_cats(config, "cat", c.data) #await get_image(config, "Bosh kategoriya")
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
     await c.message.delete()
