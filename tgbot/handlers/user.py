@@ -173,9 +173,10 @@ async def change_lang(c: CallbackQuery):
     await UserSettings.get_lang.set()
 
 
-async def get_lang_set(c: CallbackQuery, config):
+async def get_lang_set(c: CallbackQuery, config, redis):
     lang = c.data.replace("lang", "")
     await update_user(user_id=c.from_user.id, data={"lang": lang}, config=config)
+    await redis.set(c.from_user.id, lang)
     await c.message.edit_text(_("Til o'zgartirildi!", locale=lang), reply_markup=settings_btns(lang))
     await UserSettings.choose.set()
 
