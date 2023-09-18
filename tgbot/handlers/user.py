@@ -18,7 +18,7 @@ _ = i18ns.gettext
 __ = i18ns.lazy_gettext
 
 
-async def user_start(m: Message, status, user, config):
+async def user_start(m: Message, status, config, user=None):
     if status == "found":
         if user["name"] is None:
             await m.answer(_("Iltimos ismingizni kiriting 👤"))
