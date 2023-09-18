@@ -33,7 +33,7 @@ async def user_start(m: Message, status, config, user=None):
     elif status == "cached":
         #img = await get_image(config, "Bosh menu")
         await m.answer_photo(
-            photo='https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg',
+            photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
             caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
             reply_markup=main_menu_kb)
         await UserMenuState.get_menu.set()
@@ -81,8 +81,10 @@ async def get_code(m: Message, state: FSMContext, config):
 async def get_role(c: CallbackQuery, config, redis, lang):
     await update_user(user_id=c.from_user.id, config=config, data={"role": c.data})
     await redis.set(c.from_user.id, lang)
-    await c.message.edit_text(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
-                              reply_markup=main_menu_kb)
+    await c.message.delete()
+    await c.message.answer_photo(photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
+        caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
+        reply_markup=main_menu_kb)
     await UserMenuState.get_menu.set()
 
 
