@@ -307,7 +307,8 @@ async def get_search(m: Message, lang, config, state: FSMContext):
         return await m.answer(_("Hech nima topilmadi ☹️"), reply_markup=back_kb)
     await m.answer(_("Qidiruvingiz bo'yicha {count} ta mahsulot topildi: 🔎 ular bilan tanishing: 👇").
                    format(count=len(res)), reply_markup=prod_btns(res, lang, "back"))
-    if state.get_state() == "UserSearch:get_name":
+    state_name = await state.get_state()
+    if state_name == "UserSearch:get_name":
         await UserSearch.next()
 
 
