@@ -225,6 +225,7 @@ async def cats_cmd(m: Message, lang, config):
     res = await get_cats(config, "glob") #await get_image(config, "Bosh kategoriya	")
     if len(res) == 0:
         return await m.answer(_("Tovarlar qo'shilmagan ❌"), reply_markup=back_kb)
+        return await m.answer(_("Tovarlar qo'shilmagan ❌"), reply_markup=back_kb)
     await m.answer_photo(
         photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
         caption=text, reply_markup=kb_constructor(res, lang))
