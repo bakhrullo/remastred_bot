@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 DEBUG = False
 
 
-def register_all_middlewares(dp, config):
-    dp.setup_middleware(EnvironmentMiddleware(config=config))
+def register_all_middlewares(dp, config, redis):
+    dp.setup_middleware(EnvironmentMiddleware(config=config, redis=redis))
     dp.setup_middleware(ACLMiddleware())
     dp.setup_middleware(i18ns)
 
@@ -55,7 +55,7 @@ async def main():
     bot['config'] = config
     bot['redis'] = redis
 
-    register_all_middlewares(dp, config)
+    register_all_middlewares(dp, config, redis)
     register_all_filters(dp)
     register_all_handlers(dp)
 
