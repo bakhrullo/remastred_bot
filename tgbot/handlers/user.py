@@ -30,23 +30,22 @@ async def user_start(m: Message, status, config, user=None):
         elif user["role"] is None:
             await m.answer(_("O'z sohangizni tanlang 👇"), reply_markup=role_kb)
             await UserStartState.get_role.set()
-        else:
-            #img = await get_image(config, "Bosh menu")
-            await m.answer_photo(
-                photo='https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg',
-                caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
-                reply_markup=main_menu_kb)
-            await UserMenuState.get_menu.set()
+    elif status == "cached":
+        #img = await get_image(config, "Bosh menu")
+        await m.answer_photo(
+            photo='https://static.vecteezy.com/system/resources/previews/002/115/431/original/coming-soon-business-sign-free-vector.jpg',
+            caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
+            reply_markup=main_menu_kb)
+        await UserMenuState.get_menu.set()
     elif status == "created":
         await m.answer(_("Assalomu alaykum 👋\nBotimizga xush kelibsiz iltimos tilni tanlang!"),
                        reply_markup=lang_btns(False))
         await UserStartState.get_lang.set()
 
 
-async def get_lang(c: CallbackQuery, config, redis):
+async def get_lang(c: CallbackQuery, config):
     lang = c.data.replace("lang", "")
     await update_user(user_id=c.from_user.id, config=config, data={"lang": lang})
-    await redis.set(c.from_user.id, lang)
     await c.message.edit_text(_("Iltimos ismingizni kiriting 👤", locale=lang))
     await UserStartState.next()
 
@@ -79,8 +78,9 @@ async def get_code(m: Message, state: FSMContext, config):
         await m.answer("Notog'ri kod yuborildi ❌\nIltimos qayta urinib ko'ring! 🔄")
 
 
-async def get_role(c: CallbackQuery, config):
+async def get_role(c: CallbackQuery, config, redis, lang):
     await update_user(user_id=c.from_user.id, config=config, data={"role": c.data})
+    await redis.set(c.from_user.id, lang)
     await c.message.edit_text(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
                               reply_markup=main_menu_kb)
     await UserMenuState.get_menu.set()
