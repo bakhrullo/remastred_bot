@@ -301,13 +301,14 @@ async def search_cmd(m: Message):
     await UserSearch.get_name.set()
 
 
-async def get_search(m: Message, lang, config):
+async def get_search(m: Message, lang, config, state: FSMContext):
     res = await get_prods_search(m.text, lang, config)
     if len(res) == 0:
         return await m.answer(_("Hech nima topilmadi ☹️"), reply_markup=back_kb)
     await m.answer(_("Qidiruvingiz bo'yicha {count} ta mahsulot topildi: 🔎 ular bilan tanishing: 👇").
                    format(count=len(res)), reply_markup=prod_btns(res, lang, "back"))
-    await UserSearch.next()
+    if state.get_state() == "UserSearch:get_name":
+        await UserSearch.next()
 
 
 async def get_prod_search(c: CallbackQuery, lang, config, state: FSMContext):
