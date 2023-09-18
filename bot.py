@@ -52,7 +52,8 @@ async def main():
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(bot, storage=storage)
 
-    bot['config'], bot['redis'] = config, redis
+    bot['config'] = config
+    bot['redis'] = redis
 
     register_all_middlewares(dp, config)
     register_all_filters(dp)
