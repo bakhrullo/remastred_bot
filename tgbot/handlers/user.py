@@ -317,7 +317,6 @@ async def get_analog_search(c: CallbackQuery, config, lang):
 
 
 async def back(c: CallbackQuery, config, lang, state: FSMContext):
-    await c.message.delete()
     data = await state.get_data()
     if c.data == "back":
         await c.message.edit_text(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
