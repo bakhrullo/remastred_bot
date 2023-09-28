@@ -74,8 +74,9 @@ def kb_constructor(cats, lang, c_d="back"):
 
 
 def analog_kb(prod_id, back="back_prod"):
-     btn = InlineKeyboardMarkup(row_width=1).add(
+    btn = InlineKeyboardMarkup(row_width=1).add(
         InlineKeyboardButton(_("Analoglar 🗄"), callback_data=prod_id),
         InlineKeyboardButton(_("🔙 Orqaga"), callback_data=back))
-     if back == "back_prod":
+    if back == "back_prod":
         btn.insert(InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
+    return btn
