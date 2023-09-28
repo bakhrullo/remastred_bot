@@ -5,6 +5,7 @@ import aioredis
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
+from aiogram.dispatcher.filters import StateFilter
 
 from tgbot.config import load_config
 from tgbot.filters.admin import AdminFilter
@@ -30,6 +31,7 @@ def register_all_middlewares(dp, config, redis):
 def register_all_filters(dp):
     dp.filters_factory.bind(AdminFilter)
     dp.filters_factory.bind(BackFilter)
+    dp.filters_factory.bind(StateFilter)
 
 
 def register_all_handlers(dp):

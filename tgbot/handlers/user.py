@@ -6,6 +6,7 @@ from aiogram.types import Message, CallbackQuery
 from tgbot.db.db_api import update_user, get_cats, get_prods, get_list_prods, get_prods_search, get_services, \
     get_regions, get_brocks, get_analogs
 from tgbot.filters.back import BackFilter
+from tgbot.filters.state_filter import StateFilter
 from tgbot.keyboards.inline import lang_btns, settings_btns, prod_btns, back_kb, role_kb, main_menu_kb, \
     kb_constructor, analog_kb
 from tgbot.keyboards.reply import contact_btn, remove_btn
@@ -144,8 +145,7 @@ async def get_region(c: CallbackQuery, state: FSMContext, config):
 
 
 async def settings(c: CallbackQuery):
-    await c.message.delete()
-    await c.message.answer(_("Sozlamalar bo'limi 🛠:"), reply_markup=settings_btns())
+    await c.message.edit_text(_("Sozlamalar bo'limi 🛠:"), reply_markup=settings_btns())
     await UserSettings.choose.set()
 
 
@@ -168,8 +168,7 @@ async def get_lang_set(c: CallbackQuery, config, redis):
 
 
 async def change_phone(c: CallbackQuery):
-    await c.message.delete()
-    await c.message.answer(_("Iltimos telefon raqamingizni yuboring 📲"), reply_markup=contact_btn)
+    await c.message.edit_text(_("Iltimos telefon raqamingizni yuboring 📲"), reply_markup=contact_btn)
     await UserSettings.get_contact.set()
 
 
@@ -369,5 +368,5 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(get_analog, BackFilter(), state=UserCatalogState.get_analog)
     dp.register_callback_query_handler(get_analog_search, BackFilter(), state=UserSearch.get_analog)
     dp.register_callback_query_handler(search, Text(equals="search"), state=UserMenuState.get_menu)
-    dp.register_message_handler(get_search, state=[UserSearch.get_name, UserSearch.get_prod])
+    dp.register_message_handler(get_search, StateFilter())
     dp.register_callback_query_handler(back, Text(startswith="back"), state="*")
