@@ -368,5 +368,5 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(get_analog, BackFilter(), state=UserCatalogState.get_analog)
     dp.register_callback_query_handler(get_analog_search, BackFilter(), state=UserSearch.get_analog)
     dp.register_callback_query_handler(search, Text(equals="search"), state=UserMenuState.get_menu)
-    dp.register_message_handler(get_search, StateFilter())
+    dp.register_message_handler(get_search, StateFilter(), state="*")
     dp.register_callback_query_handler(back, Text(startswith="back"), state="*")
