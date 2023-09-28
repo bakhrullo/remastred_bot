@@ -58,6 +58,7 @@ def prod_btns(prods, lang, back="back_sub"):
                                                                                               price=prod['price']),
                                              callback_data=prod['id']))
     prod_btn.insert(InlineKeyboardButton(_("🔙 Orqaga"), callback_data=back))
+    prod_btn.insert(InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
     return prod_btn
 
 
@@ -74,4 +75,5 @@ def kb_constructor(cats, lang, c_d="back"):
 def analog_kb(prod_id, back="back_prod"):
     return InlineKeyboardMarkup(row_width=1).add(
         InlineKeyboardButton(_("Analoglar 🗄"), callback_data=prod_id),
-        InlineKeyboardButton(_("🔙 Orqaga"), callback_data=back))
+        InlineKeyboardButton(_("🔙 Orqaga"), callback_data=back),
+        InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
