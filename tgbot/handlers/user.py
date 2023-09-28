@@ -273,15 +273,13 @@ async def search_cmd(m: Message):
     await UserSearch.get_name.set()
 
 
-async def get_search(m: Message, lang, config, state: FSMContext):
+async def get_search(m: Message, lang, config):
     res = await get_prods_search(m.text, lang, config)
     if len(res) == 0:
         return await m.answer(_("Hech nima topilmadi ☹️"), reply_markup=back_kb)
     await m.answer(_("Qidiruvingiz bo'yicha {count} ta mahsulot topildi: 🔎 ular bilan tanishing: 👇").
                    format(count=len(res)), reply_markup=prod_btns(res, lang, "back"))
-    state_name = await state.get_state()
-    if state_name == "UserSearch:get_name":
-        await UserSearch.next()
+    await UserSearch.get_prod.set()
 
 
 async def get_prod_search(c: CallbackQuery, lang, config, state: FSMContext):
@@ -370,5 +368,5 @@ def register_user(dp: Dispatcher):
     dp.register_message_handler(get_search, state=[UserMenuState.get_menu, UserCatalogState.get_glob_cat,
                                                    UserCatalogState.get_cat, UserCatalogState.get_sub_cat,
                                                    UserCatalogState.get_prod, UserCatalogState.get_analog,
-                                                   UserSearch.get_name, UserSearch.get_prod])
+                                                   UserSearch.get_name, UserSearch.get_prod, UserSearch.get_analog])
     dp.register_callback_query_handler(back, Text(startswith="back"), state="*")
