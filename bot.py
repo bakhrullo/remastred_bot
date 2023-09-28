@@ -5,11 +5,11 @@ import aioredis
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
-from aiogram.dispatcher.filters import StateFilter
 
 from tgbot.config import load_config
 from tgbot.filters.admin import AdminFilter
 from tgbot.filters.back import BackFilter
+from tgbot.filters.state_filter import StateFilter
 from tgbot.handlers.admin import register_admin
 from tgbot.handlers.echo import register_echo
 from tgbot.handlers.user import register_user
