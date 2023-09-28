@@ -66,6 +66,8 @@ def kb_constructor(cats, lang, c_d="back"):
     for cat in cats:
         btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
     btn.insert(InlineKeyboardButton(_("🔙 Orqaga"), callback_data=c_d))
+    if c_d != "back":
+        btn.insert(InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
     return btn
 
 
