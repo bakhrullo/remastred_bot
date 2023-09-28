@@ -6,7 +6,6 @@ from aiogram.types import Message, CallbackQuery
 from tgbot.db.db_api import update_user, get_cats, get_prods, get_list_prods, get_prods_search, get_services, \
     get_regions, get_brocks, get_analogs
 from tgbot.filters.back import BackFilter
-from tgbot.filters.state_filter import StateFilter
 from tgbot.keyboards.inline import lang_btns, settings_btns, prod_btns, back_kb, role_kb, main_menu_kb, \
     kb_constructor, analog_kb
 from tgbot.keyboards.reply import contact_btn, remove_btn
@@ -368,5 +367,8 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(get_analog, BackFilter(), state=UserCatalogState.get_analog)
     dp.register_callback_query_handler(get_analog_search, BackFilter(), state=UserSearch.get_analog)
     dp.register_callback_query_handler(search, Text(equals="search"), state=UserMenuState.get_menu)
-    dp.register_message_handler(get_search, StateFilter(), state="*")
+    dp.register_message_handler(get_search, state=[UserMenuState.get_menu, UserCatalogState.get_glob_cat,
+                                                   UserCatalogState.get_cat, UserCatalogState.get_sub_cat,
+                                                   UserCatalogState.get_prod, UserCatalogState.get_analog,
+                                                   UserSearch.get_name, UserSearch.get_prod])
     dp.register_callback_query_handler(back, Text(startswith="back"), state="*")

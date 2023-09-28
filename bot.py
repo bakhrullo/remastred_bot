@@ -31,7 +31,6 @@ def register_all_middlewares(dp, config, redis):
 def register_all_filters(dp):
     dp.filters_factory.bind(AdminFilter)
     dp.filters_factory.bind(BackFilter)
-    dp.filters_factory.bind(StateFilter)
 
 
 def register_all_handlers(dp):
