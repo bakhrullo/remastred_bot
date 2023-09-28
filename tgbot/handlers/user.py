@@ -18,7 +18,7 @@ _ = i18ns.gettext
 __ = i18ns.lazy_gettext
 
 
-async def user_start(m: Message, status, config, user=None):
+async def user_start(m: Message, status, user=None):
     if status == "found":
         if user["name"] is None:
             await m.answer(_("Iltimos ismingizni kiriting 👤"))
@@ -106,7 +106,7 @@ async def get_feedback(m: Message, user, config):
 
 
 async def bonus(c: CallbackQuery, config, lang):
-    res = await get_brocks(config)  # await get_image(config, "Xizmatlar")
+    res = await get_brocks(config)
     await c.message.edit_text(_(
         "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi "
         "xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"),
@@ -115,7 +115,7 @@ async def bonus(c: CallbackQuery, config, lang):
 
 
 async def bonus_cmd(m: Message, config, lang):
-    res = await get_brocks(config)  # await get_image(config, "Xizmatlar")
+    res = await get_brocks(config)
     await m.answer(_(
         "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi "
         "xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"),
@@ -130,7 +130,7 @@ async def get_brock(c: CallbackQuery, state: FSMContext, config, lang):
     await UserBonus.next()
 
 
-async def get_region(c: CallbackQuery, state: FSMContext, config, lang):
+async def get_region(c: CallbackQuery, state: FSMContext, config):
     data = await state.get_data()
     res = await get_services(config=config, brock=data["brock"], region=c.data)
     if len(res) == 0:
@@ -193,7 +193,7 @@ async def get_code_set(m: Message, state: FSMContext, config):
 
 
 async def cats(c: CallbackQuery, lang, config):
-    res = await get_cats(config, "glob")  ##await get_image(config, "Bosh kategoriya")
+    res = await get_cats(config, "glob")
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
     await c.message.edit_text(_(
@@ -203,29 +203,26 @@ async def cats(c: CallbackQuery, lang, config):
 
 
 async def cats_cmd(m: Message, lang, config):
-    text = _("Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
-             "toifasi bo'yicha topishingiz mumkin 📃")
-    res = await get_cats(config, "glob")  # await get_image(config, "Bosh kategoriya	")
+    res = await get_cats(config, "glob")
     if len(res) == 0:
         return await m.answer(_("Tovarlar qo'shilmagan ❌"), reply_markup=back_kb)
-        return await m.answer(_("Tovarlar qo'shilmagan ❌"), reply_markup=back_kb)
-    await m.answer(text, reply_markup=kb_constructor(res, lang))
+    await m.answer(_("Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
+                     "toifasi bo'yicha topishingiz mumkin 📃"), reply_markup=kb_constructor(res, lang))
     await UserCatalogState.get_glob_cat.set()
 
 
 async def get_glob_cat(c: CallbackQuery, lang, config, state: FSMContext):
     await state.update_data(glob_cat_id=c.data)
-    text = _("Bo'limi tanlang 👇")
-    res = await get_cats(config, "cat", c.data)  # await get_image(config, "Bosh kategoriya")
+    res = await get_cats(config, "cat", c.data)
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
-    await c.message.edit_text(text,
+    await c.message.edit_text(_("Bo'limi tanlang 👇"),
                               reply_markup=kb_constructor(res, lang, "back_glob"))
     await UserCatalogState.next()
 
 
 async def get_cat(c: CallbackQuery, lang, config, state: FSMContext):
-    res = await get_cats(config, "sub", c.data)  # await get_image(config, "Kichik kategoriya")
+    res = await get_cats(config, "sub", c.data)
     await state.update_data(cat_id=c.data)
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
@@ -239,8 +236,7 @@ async def get_sub_cat(c: CallbackQuery, lang, config, state: FSMContext):
     await state.update_data(sub_cat_id=c.data)
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
-    await c.message.delete()
-    await c.message.answer(_("Bo'limni tanlang 👇"), reply_markup=prod_btns(res, lang))
+    await c.message.edit_text(_("Bo'limni tanlang 👇"), reply_markup=prod_btns(res, lang))
     await UserCatalogState.next()
 
 
@@ -270,8 +266,7 @@ async def get_analog(c: CallbackQuery, config, lang):
 
 
 async def search(c: CallbackQuery):
-    await c.message.delete()
-    await c.message.answer(_("Qidirayotgan mahsoltingizni kiriting 🔎"), reply_markup=back_kb)
+    await c.message.edit_text(_("Qidirayotgan mahsoltingizni kiriting 🔎"), reply_markup=back_kb)
     await UserSearch.get_name.set()
 
 
@@ -338,7 +333,7 @@ async def back(c: CallbackQuery, config, lang, state: FSMContext):
                                   reply_markup=kb_constructor(res, lang, "back_cat"))
     elif c.data == "back_prod":
         res = await get_list_prods(data["sub_cat_id"], config)
-        await c.message.answer(_("Bo'limni tanlang 👇"), reply_markup=prod_btns(res, lang))
+        await c.message.edit_text(_("Bo'limni tanlang 👇"), reply_markup=prod_btns(res, lang))
     await UserCatalogState.previous()
 
 
