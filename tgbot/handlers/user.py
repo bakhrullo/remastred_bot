@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.types import Message, CallbackQuery
 
 from tgbot.db.db_api import update_user, get_cats, get_prods, get_list_prods, get_prods_search, get_services, \
-    get_regions, get_brocks, get_analogs, get_image
+    get_regions, get_brocks, get_analogs
 from tgbot.filters.back import BackFilter
 from tgbot.keyboards.inline import lang_btns, settings_btns, prod_btns, back_kb, role_kb, main_menu_kb, \
     kb_constructor, analog_kb
@@ -31,11 +31,8 @@ async def user_start(m: Message, status, config, user=None):
             await m.answer(_("O'z sohangizni tanlang 👇"), reply_markup=role_kb)
             await UserStartState.get_role.set()
     elif status == "cached":
-        #img = await get_image(config, "Bosh menu")
-        await m.answer_photo(
-            photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-            caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
-            reply_markup=main_menu_kb)
+        await m.answer(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
+                       reply_markup=main_menu_kb)
         await UserMenuState.get_menu.set()
     elif status == "created":
         await m.answer(_("Assalomu alaykum 👋\nBotimizga xush kelibsiz iltimos tilni tanlang!"),
@@ -81,16 +78,13 @@ async def get_code(m: Message, state: FSMContext, config):
 async def get_role(c: CallbackQuery, config, redis, lang):
     await update_user(user_id=c.from_user.id, config=config, data={"role": c.data})
     await redis.set(c.from_user.id, lang)
-    await c.message.delete()
-    await c.message.answer_photo(photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-        caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
-        reply_markup=main_menu_kb)
+    await c.message.edit_text(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
+                              reply_markup=main_menu_kb)
     await UserMenuState.get_menu.set()
 
 
 async def feedback(c: CallbackQuery):
-    await c.message.delete()
-    await c.message.answer(_(
+    await c.message.edit_text(_(
         "Bu bo'limda siz bizga izoh yozib qoldirishingiz mumkin, biz izoh bilan tanishib chiqib siz bilan bog'lanamiz ⏳"),
         reply_markup=back_kb)
     await UserFeedback.get_feedback.set()
@@ -112,24 +106,19 @@ async def get_feedback(m: Message, user, config):
 
 
 async def bonus(c: CallbackQuery, config, lang):
-    res = await get_brocks(config) #await get_image(config, "Xizmatlar")
-    await c.message.delete()
-    await c.message.answer_photo(
-        photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-        caption=_(
-            "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi "
-            "xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"),
+    res = await get_brocks(config)  # await get_image(config, "Xizmatlar")
+    await c.message.edit_text(_(
+        "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi "
+        "xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"),
         reply_markup=kb_constructor(cats=res, lang=lang))
     await UserBonus.get_brock.set()
 
 
 async def bonus_cmd(m: Message, config, lang):
-    res = await get_brocks(config) #await get_image(config, "Xizmatlar")
-    await m.answer_photo(
-        photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-        caption=_(
-            "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi "
-            "xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"),
+    res = await get_brocks(config)  # await get_image(config, "Xizmatlar")
+    await m.answer(_(
+        "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi "
+        "xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"),
         reply_markup=kb_constructor(cats=res, lang=lang))
     await UserBonus.get_brock.set()
 
@@ -137,10 +126,7 @@ async def bonus_cmd(m: Message, config, lang):
 async def get_brock(c: CallbackQuery, state: FSMContext, config, lang):
     res = await get_regions(config)
     await state.update_data(brock=c.data)
-    await c.message.delete()
-    await c.message.answer_photo(
-        photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-        caption=_("Viloyatingizni tanlang"), reply_markup=kb_constructor(res, lang))
+    await c.message.edit_text(_("Viloyatingizni tanlang"), reply_markup=kb_constructor(res, lang))
     await UserBonus.next()
 
 
@@ -207,55 +193,44 @@ async def get_code_set(m: Message, state: FSMContext, config):
 
 
 async def cats(c: CallbackQuery, lang, config):
-    res = await get_cats(config, "glob") ##await get_image(config, "Bosh kategoriya")
+    res = await get_cats(config, "glob")  ##await get_image(config, "Bosh kategoriya")
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
-    await c.message.delete()
-    await c.message.answer_photo(
-        photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-        caption=_(
-            "Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
-            "toifasi bo'yicha topishingiz mumkin 📃"), reply_markup=kb_constructor(res, lang))
+    await c.message.edit_text(_(
+        "Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
+        "toifasi bo'yicha topishingiz mumkin 📃"), reply_markup=kb_constructor(res, lang))
     await UserCatalogState.get_glob_cat.set()
 
 
 async def cats_cmd(m: Message, lang, config):
     text = _("Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
              "toifasi bo'yicha topishingiz mumkin 📃")
-    res = await get_cats(config, "glob") #await get_image(config, "Bosh kategoriya	")
+    res = await get_cats(config, "glob")  # await get_image(config, "Bosh kategoriya	")
     if len(res) == 0:
         return await m.answer(_("Tovarlar qo'shilmagan ❌"), reply_markup=back_kb)
         return await m.answer(_("Tovarlar qo'shilmagan ❌"), reply_markup=back_kb)
-    await m.answer_photo(
-        photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-        caption=text, reply_markup=kb_constructor(res, lang))
+    await m.answer(text, reply_markup=kb_constructor(res, lang))
     await UserCatalogState.get_glob_cat.set()
 
 
 async def get_glob_cat(c: CallbackQuery, lang, config, state: FSMContext):
     await state.update_data(glob_cat_id=c.data)
     text = _("Bo'limi tanlang 👇")
-    res = await get_cats(config, "cat", c.data) #await get_image(config, "Bosh kategoriya")
+    res = await get_cats(config, "cat", c.data)  # await get_image(config, "Bosh kategoriya")
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
-    await c.message.delete()
-    await c.message.answer_photo(
-        photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-        caption=text,
-        reply_markup=kb_constructor(res, lang, "back_glob"))
+    await c.message.edit_text(text,
+                              reply_markup=kb_constructor(res, lang, "back_glob"))
     await UserCatalogState.next()
 
 
 async def get_cat(c: CallbackQuery, lang, config, state: FSMContext):
-    res = await get_cats(config, "sub", c.data) #await get_image(config, "Kichik kategoriya")
+    res = await get_cats(config, "sub", c.data)  # await get_image(config, "Kichik kategoriya")
     await state.update_data(cat_id=c.data)
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
-    await c.message.delete()
-    await c.message.answer_photo(
-        photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-        caption=_("Bo'limi tanlang 👇"),
-        reply_markup=kb_constructor(res, lang, "back_cat"))
+    await c.message.edit_text(_("Bo'limi tanlang 👇"),
+                              reply_markup=kb_constructor(res, lang, "back_cat"))
     await UserCatalogState.next()
 
 
@@ -345,32 +320,23 @@ async def back(c: CallbackQuery, config, lang, state: FSMContext):
     await c.message.delete()
     data = await state.get_data()
     if c.data == "back":
-        #img = await get_image(config, "Bosh menu")
-        await c.message.answer_photo(
-            photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-            caption=_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
-            reply_markup=main_menu_kb)
+        await c.message.edit_text(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
+                                  reply_markup=main_menu_kb)
         return await UserMenuState.get_menu.set()
     elif c.data == "back_glob":
-        res = await get_cats(config, "glob") #await get_image(config, "Bosh kategoriya")
-        await c.message.answer_photo(
-            photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-            caption=_(
-                "Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
-                "toifasi bo'yicha topishingiz mumkin 📃"), reply_markup=kb_constructor(res, lang))
+        res = await get_cats(config, "glob")
+        await c.message.edit_text(_(
+            "Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
+            "toifasi bo'yicha topishingiz mumkin 📃"), reply_markup=kb_constructor(res, lang))
     elif c.data == "back_cat":
         text = _("Bo'limi tanlang 👇")
-        res = await get_cats(config, "cat", data["glob_cat_id"]) #await get_image(config, "Bosh kategoriya")
-        await c.message.answer_photo(
-            photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-            caption=text,
-            reply_markup=kb_constructor(res, lang, "back_glob"))
+        res = await get_cats(config, "cat", data["glob_cat_id"])
+        await c.message.edit_text(text,
+                                  reply_markup=kb_constructor(res, lang, "back_glob"))
     elif c.data == "back_sub":
-        res = await get_cats(config, "sub", data["cat_id"]) #await get_image(config, "Kichik kategoriya")
-        await c.message.answer_photo(
-            photo="AgACAgQAAxkDAAIDFmUH7hAbaeourxOUZFTpXTlprE1gAALSrjEbwYqFUZbpdHmVk5zfAQADAgADdwADMAQ",
-            caption=_("Bo'limi tanlang 👇"),
-            reply_markup=kb_constructor(res, lang, "back_cat"))
+        res = await get_cats(config, "sub", data["cat_id"])
+        await c.message.edit_text(_("Bo'limi tanlang 👇"),
+                                  reply_markup=kb_constructor(res, lang, "back_cat"))
     elif c.data == "back_prod":
         res = await get_list_prods(data["sub_cat_id"], config)
         await c.message.answer(_("Bo'limni tanlang 👇"), reply_markup=prod_btns(res, lang))
