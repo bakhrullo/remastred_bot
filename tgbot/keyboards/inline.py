@@ -58,7 +58,7 @@ def prod_btns(prods, lang, back="back_sub"):
                                                                                               price=prod['price']),
                                              callback_data=prod['id']))
     prod_btn.insert(InlineKeyboardButton(_("🔙 Orqaga"), callback_data=back))
-    if back != "back_sub":
+    if back == "back_sub":
         prod_btn.insert(InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
     return prod_btn
 
