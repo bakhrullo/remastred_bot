@@ -237,7 +237,11 @@ async def get_sub_cat(c: CallbackQuery, lang, config, state: FSMContext):
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
     text, analogs = txt(res, lang)
-    await c.message.edit_text(text, reply_markup=prod_btns(analogs))
+    if len(text) > 4096:
+        for x in range(0, len(text), 4096):
+            await c.message.edit_text(text[x:x + 4096], reply_markup=prod_btns(analogs) if x+4096 == len(text) else None)
+    else:
+        await c.message.edit_text(text, reply_markup=prod_btns(analogs))
     await UserCatalogState.next()
 
 
