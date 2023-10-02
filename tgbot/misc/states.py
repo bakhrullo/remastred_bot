@@ -38,5 +38,4 @@ class UserCatalogState(StatesGroup):
 
 class UserSearch(StatesGroup):
     get_name = State()
-    get_prod = State()
     get_analog = State()

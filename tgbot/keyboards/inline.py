@@ -19,7 +19,6 @@ main_menu_kb = InlineKeyboardMarkup(row_width=2).add(
     InlineKeyboardButton(_("Sozlamalar ⚙️"), callback_data="settings"),
     InlineKeyboardButton(_("Izoh qoldirish ✏"), callback_data="feedback"))
 
-
 def settings_btns(locale=None):
     settings_kb = InlineKeyboardMarkup(row_width=1)
     settings_kb.add(
@@ -49,11 +48,15 @@ def main_menu_btns(cats, lang):
     return main_menu_btn
 
 
-def prod_btns(analogs):
-    return InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(_("Analoglar 🗄"), callback_data=analogs),
+def prod_btns(analogs=False):
+    return InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(_("Analoglar 🗄"), callback_data=analogs) if analogs else None,
                                                  InlineKeyboardButton(_("🔙 Orqaga"), callback_data="back_sub"),
                                                  InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
 
+
+def analog_kb():
+    return InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(_("🔙 Orqaga"), callback_data="back_sub"),
+                                                 InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
 
 def kb_constructor(cats, lang, c_d="back"):
     btn = InlineKeyboardMarkup(row_width=1)
@@ -61,14 +64,5 @@ def kb_constructor(cats, lang, c_d="back"):
         btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
     btn.insert(InlineKeyboardButton(_("🔙 Orqaga"), callback_data=c_d))
     if c_d != "back":
-        btn.insert(InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
-    return btn
-
-
-def analog_kb(prod_id, back="back_prod"):
-    btn = InlineKeyboardMarkup(row_width=1).add(
-        InlineKeyboardButton(_("Analoglar 🗄"), callback_data=prod_id),
-        InlineKeyboardButton(_("🔙 Orqaga"), callback_data=back))
-    if back == "back_prod":
         btn.insert(InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
     return btn
