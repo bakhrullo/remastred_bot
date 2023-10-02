@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.types import Message, CallbackQuery
 
 from tgbot.db.db_api import update_user, get_cats, get_prods, get_list_prods, get_prods_search, get_services, \
-    get_regions, get_brocks, get_analogs
+    get_regions, get_brocks, get_analogs, get_user
 from tgbot.filters.back import BackFilter
 from tgbot.keyboards.inline import lang_btns, settings_btns, prod_btns, back_kb, role_kb, main_menu_kb, \
     kb_constructor, analog_kb
@@ -97,7 +97,8 @@ async def feedback_cmd(m: Message):
     await UserFeedback.get_feedback.set()
 
 
-async def get_feedback(m: Message, user, config):
+async def get_feedback(m: Message, config):
+    user = await get_user(m.from_user.id, config)
     await m.bot.send_message(chat_id=config.tg_bot.channel_id, text=f"👤 Ism: {user['name']}\n"
                                                                     f"📱 Raqam: {user['phone']}\n"
                                                                     f"💬 Izoh: {m.text}")
@@ -232,30 +233,22 @@ async def get_cat(c: CallbackQuery, lang, config, state: FSMContext):
 async def get_sub_cat(c: CallbackQuery, lang, config, state: FSMContext):
     res = await get_list_prods(c.data, config)
     await state.update_data(sub_cat_id=c.data)
+    text, analogs = "", []
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
-    await c.message.edit_text(_("Bo'limni tanlang 👇"), reply_markup=prod_btns(res, lang))
-    await UserCatalogState.next()
-
-
-async def get_prod(c: CallbackQuery, lang, config, state: FSMContext):
-    res = await get_prods(c.data, config)
-    await state.update_data(prod_id=c.data)
-    await c.message.edit_text(
-        _("🆔 Mahsulot nomi: {name}\n📍 Viloyat/hudud: {region}\n🏙 Ishlab chiqarilgan: {made_in}\n💰 Narxi: {price}\n"
-          "📞Telefon raqam: {phone}\n💬 Opisaniya: {descr}").format(name=res[f"name_{lang}"],
-                                                                  region=res["region"]
-                                                                  [f'name_{lang}'],
-                                                                  made_in=res["made_in"],
-                                                                  price=res["price"],
-                                                                  phone=res["phone"],
-                                                                  descr=res[f"descr_{lang}"]),
-        reply_markup=analog_kb(c.data))
+    for i in res:
+        if i["analog"] != 0:
+            analogs.append(i["analog"])
+        text += _(
+            "🆔 Mahsulot nomi: {name}\n📍 Viloyat/hudud: {region}\n🏙 Ishlab chiqarilgan: {made_in}\n💰 Narxi: {price}\n"
+            "📞Telefon raqam: {phone}\n").format(name=i[f"name_{lang}"], region=i["region"][f'name_{lang}'],
+                                                made_in=i["made_in"], price=i["price"], phone=i["phone"])
+    await c.message.edit_text(text, reply_markup=prod_btns(str(analogs)))
     await UserCatalogState.next()
 
 
 async def get_analog(c: CallbackQuery, config, lang):
-    res = await get_analogs(config, c.data)
+    res = await get_analogs(config, list(c.data))
     if len(res) == 0:
         return await c.answer(_("Analoglar topilmadi 😔"))
     await c.message.edit_text(_("Modelni {count} ta analogi topildi 👇").format(count=len(res)),
@@ -278,7 +271,7 @@ async def get_search(m: Message, lang, config):
     if len(res) == 0:
         return await m.answer(_("Hech nima topilmadi ☹️"), reply_markup=back_kb)
     await m.answer(_("Qidiruvingiz bo'yicha {count} ta mahsulot topildi: 🔎 ular bilan tanishing: 👇").
-                   format(count=len(res)), reply_markup=prod_btns(res, lang, "back"))
+                   format(count=len(res)), reply_markup=prod_btns())
     await UserSearch.get_prod.set()
 
 
@@ -360,13 +353,12 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(get_glob_cat, BackFilter(), state=UserCatalogState.get_glob_cat)
     dp.register_callback_query_handler(get_cat, BackFilter(), state=UserCatalogState.get_cat)
     dp.register_callback_query_handler(get_sub_cat, BackFilter(), state=UserCatalogState.get_sub_cat)
-    dp.register_callback_query_handler(get_prod, BackFilter(), state=UserCatalogState.get_prod)
     dp.register_callback_query_handler(get_prod_search, BackFilter(), state=UserSearch.get_prod)
     dp.register_callback_query_handler(get_analog, BackFilter(), state=UserCatalogState.get_analog)
     dp.register_callback_query_handler(get_analog_search, BackFilter(), state=UserSearch.get_analog)
     dp.register_callback_query_handler(search, Text(equals="search"), state=UserMenuState.get_menu)
     dp.register_message_handler(get_search, state=[UserMenuState.get_menu, UserCatalogState.get_glob_cat,
                                                    UserCatalogState.get_cat, UserCatalogState.get_sub_cat,
-                                                   UserCatalogState.get_prod, UserCatalogState.get_analog,
-                                                   UserSearch.get_name, UserSearch.get_prod, UserSearch.get_analog])
+                                                   UserCatalogState.get_analog, UserSearch.get_name,
+                                                   UserSearch.get_prod, UserSearch.get_analog])
     dp.register_callback_query_handler(back, Text(startswith="back"), state="*")

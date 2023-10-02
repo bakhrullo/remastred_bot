@@ -17,8 +17,7 @@ main_menu_kb = InlineKeyboardMarkup(row_width=2).add(
     InlineKeyboardButton(_("Xizmatlar (bonus) 🚚 "), callback_data="services"),
     InlineKeyboardButton(_("Katalog 📖"), callback_data="catalog"),
     InlineKeyboardButton(_("Sozlamalar ⚙️"), callback_data="settings"),
-    InlineKeyboardButton(_("Izoh qoldirish ✏"), callback_data="feedback"),
-)
+    InlineKeyboardButton(_("Izoh qoldirish ✏"), callback_data="feedback"))
 
 
 def settings_btns(locale=None):
@@ -50,17 +49,10 @@ def main_menu_btns(cats, lang):
     return main_menu_btn
 
 
-def prod_btns(prods, lang, back="back_sub"):
-    prod_btn = InlineKeyboardMarkup(row_width=1)
-    for prod in prods:
-        prod_btn.insert(InlineKeyboardButton(_("{name} ({region}) narx: {price} so'm").format(name=prod[f'name_{lang}'],
-                                                                                              region=prod['made_in'],
-                                                                                              price=prod['price']),
-                                             callback_data=prod['id']))
-    prod_btn.insert(InlineKeyboardButton(_("🔙 Orqaga"), callback_data=back))
-    if back == "back_sub":
-        prod_btn.insert(InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
-    return prod_btn
+def prod_btns(analogs):
+    return InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(_("Analoglar 🗄"), callback_data=analogs),
+                                                 InlineKeyboardButton(_("🔙 Orqaga"), callback_data="back_sub"),
+                                                 InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
 
 
 def kb_constructor(cats, lang, c_d="back"):
