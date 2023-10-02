@@ -329,7 +329,6 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(get_glob_cat, BackFilter(), state=UserCatalogState.get_glob_cat)
     dp.register_callback_query_handler(get_cat, BackFilter(), state=UserCatalogState.get_cat)
     dp.register_callback_query_handler(get_sub_cat, BackFilter(), state=UserCatalogState.get_sub_cat)
-    dp.register_callback_query_handler(get_prod_search, BackFilter(), state=UserSearch.get_prod)
     dp.register_callback_query_handler(get_analog, BackFilter(), state=UserCatalogState.get_analog)
     dp.register_callback_query_handler(get_analog_search, BackFilter(), state=UserSearch.get_analog)
     dp.register_callback_query_handler(search, Text(equals="search"), state=UserMenuState.get_menu)
