@@ -60,7 +60,7 @@ async def main():
     register_all_filters(dp)
     register_all_handlers(dp)
 
-    await set_default_commands(dp)
+#    await set_default_commands(dp)
 
     try:
         await dp.start_polling()

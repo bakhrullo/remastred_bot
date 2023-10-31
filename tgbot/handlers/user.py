@@ -249,7 +249,8 @@ async def get_analog(c: CallbackQuery, config, lang):
     if len(list(c.data)) == 0:
         return await c.answer(_("Analoglar topilmadi 😔"))
     res = await get_analogs(config, list(c.data))
-    text = txt(res, lang)
+    print(res)
+    text, analog  = txt(res, lang)
     await c.message.edit_text(text, reply_markup=analog_kb())
 
 
@@ -276,7 +277,7 @@ async def get_analog_search(c: CallbackQuery, config, lang):
     if len(list(c.data)) == 0:
         return await c.answer(_("Analoglar topilmadi 😔"))
     res = await get_analogs(config, list(c.data))
-    text = txt(res, lang)
+    text, analogs = txt(res, lang)
     await c.message.edit_text(text, reply_markup=analog_kb())
 
 

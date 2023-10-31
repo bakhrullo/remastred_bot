@@ -9,12 +9,12 @@ back_kb = InlineKeyboardMarkup().add(back_btn)
 
 role_kb = InlineKeyboardMarkup(row_width=1).add(
     InlineKeyboardButton(_("Ishlab chiqaruvchi 👷‍♀️"), callback_data="Ishlab chiqaruvchi"),
-    InlineKeyboardButton(_("O'rtakash 👨‍💻️"), callback_data="O'rtakash"),
+    InlineKeyboardButton(_("Ikkalasi ham 👨‍💻️"), callback_data="Ikkalsi ham"),
     InlineKeyboardButton(_("Xaridor  👨️"), callback_data="Xaridor"))
 
 main_menu_kb = InlineKeyboardMarkup(row_width=2).add(
     InlineKeyboardButton(_("Qidruv 🔎"), callback_data="search"),
-    InlineKeyboardButton(_("Xizmatlar (bonus) 🚚 "), callback_data="services"),
+#    InlineKeyboardButton(_("Xizmatlar (bonus) 🚚 "), callback_data="services"),
     InlineKeyboardButton(_("Katalog 📖"), callback_data="catalog"),
     InlineKeyboardButton(_("Sozlamalar ⚙️"), callback_data="settings"),
     InlineKeyboardButton(_("Izoh qoldirish ✏"), callback_data="feedback"))
