@@ -69,7 +69,7 @@ async def get_services(config, **kwargs):
 
 async def get_analogs(config, analogs_id):
     async with aiohttp.ClientSession() as session:
-        async with session.get(url=f'{config.db.database_url}analog', params={"analogs_id": analogs_id}) as response:
+        async with session.get(url=f'{config.db.database_url}analog', params={"analog_id": analogs_id}) as response:
             return await response.json()
 
 

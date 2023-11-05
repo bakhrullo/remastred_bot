@@ -49,14 +49,19 @@ def main_menu_btns(cats, lang):
 
 
 def prod_btns(analogs=False):
-    return InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(_("Analoglar 🗄"), callback_data=analogs) if analogs else None,
-                                                 InlineKeyboardButton(_("🔙 Orqaga"), callback_data="back_sub"),
-                                                 InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
+    kb = InlineKeyboardMarkup(row_width=1)
+    kb.add(InlineKeyboardButton(_("Analoglar 🗄"), callback_data="analog"),
+           InlineKeyboardButton(_("🔙 Orqaga"), callback_data="back_sub"),
+                                   InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
+    return kb
 
+def analog_kb(analogs):
+    kbs = InlineKeyboardMarkup(row_width=1)
+    for analog in analogs:
+        kbs.insert(InlineKeyboardButton(text=analog, callback_data=analog))
+    kbs.add(InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
+    return kbs
 
-def analog_kb():
-    return InlineKeyboardMarkup(row_width=1).add(InlineKeyboardButton(_("🔙 Orqaga"), callback_data="back_sub"),
-                                                 InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
 
 def kb_constructor(cats, lang, c_d="back"):
     btn = InlineKeyboardMarkup(row_width=1)

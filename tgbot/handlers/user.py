@@ -264,21 +264,23 @@ async def search_cmd(m: Message):
     await UserSearch.get_name.set()
 
 
-async def get_search(m: Message, lang, config):
+async def get_search(m: Message, state: FSMContext, lang, config):
     res = await get_prods_search(m.text, lang, config)
     if len(res) == 0:
         return await m.answer(_("Hech nima topilmadi ☹️"), reply_markup=back_kb)
     text, analogs = txt(res, lang)
-    await m.answer(text, reply_markup=prod_btns(analogs))
+    await state.update_data(analogs=analogs)
+    await m.answer(text, reply_markup=prod_btns("analog"))
     await UserSearch.get_analog.set()
 
 
-async def get_analog_search(c: CallbackQuery, config, lang):
-    if len(list(c.data)) == 0:
-        return await c.answer(_("Analoglar topilmadi 😔"))
-    res = await get_analogs(config, list(c.data))
+async def get_analog_search(c: CallbackQuery, state: FSMContext, config, lang):
+    data = await state.get_data()
+    res = await get_analogs(config, data["analogs"])
     text, analogs = txt(res, lang)
-    await c.message.edit_text(text, reply_markup=analog_kb())
+    await state.update_data(analogs=analogs)
+    await c.message.edit_text(text, reply_markup=analog_kb(analogs))
+
 
 
 async def back(c: CallbackQuery, config, lang, state: FSMContext):
