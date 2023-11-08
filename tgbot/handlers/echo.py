@@ -1,4 +1,4 @@
-from aiogram import types, Dispatchercd
+from aiogram import types, Dispatcher
 
 from tgbot.misc.i18n import i18ns
 
