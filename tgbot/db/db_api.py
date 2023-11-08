@@ -69,11 +69,17 @@ async def get_services(config, **kwargs):
 
 async def get_analogs(config, analogs_id):
     async with aiohttp.ClientSession() as session:
-        async with session.get(url=f'{config.db.database_url}analog', params={"analog_id": analogs_id}) as response:
+        async with session.post(url=f'{config.db.database_url}analog', data={"analog_id": analogs_id}) as response:
             return await response.json()
 
 
 async def get_image(config, option):
     async with aiohttp.ClientSession() as session:
         async with session.get(url=f'{config.db.database_url}images/{option}') as response:
+            return await response.json()
+
+
+async def get_analog_type_api(config, option):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url=f'{config.db.database_url}analog_type/', params={"name": option}) as response:
             return await response.json()

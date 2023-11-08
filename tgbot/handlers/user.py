@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.types import Message, CallbackQuery
 
 from tgbot.db.db_api import update_user, get_cats, get_list_prods, get_prods_search, get_services, \
-    get_regions, get_brocks, get_analogs, get_user
+    get_regions, get_brocks, get_analogs, get_user, get_analog_type_api
 from tgbot.filters.back import BackFilter
 from tgbot.keyboards.inline import lang_btns, settings_btns, prod_btns, back_kb, role_kb, main_menu_kb, \
     kb_constructor, analog_kb
@@ -31,6 +31,10 @@ async def user_start(m: Message, status, user=None):
         elif user["role"] is None:
             await m.answer(_("O'z sohangizni tanlang 👇"), reply_markup=role_kb)
             await UserStartState.get_role.set()
+        else:
+            await m.answer(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
+                           reply_markup=main_menu_kb)
+            await UserMenuState.get_menu.set()
     elif status == "cached":
         await m.answer(_("Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"),
                        reply_markup=main_menu_kb)
@@ -116,15 +120,6 @@ async def bonus(c: CallbackQuery, config, lang):
     await UserBonus.get_brock.set()
 
 
-async def bonus_cmd(m: Message, config, lang):
-    res = await get_brocks(config)
-    await m.answer(_(
-        "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda siz mushkulingizni yengil qiluvchi "
-        "xizmat turlarining raqamlari va ular haqida ma'lumot olish imkoniyatiga ega bo'lasiz Ular bilan tanishing 👇"),
-        reply_markup=kb_constructor(cats=res, lang=lang))
-    await UserBonus.get_brock.set()
-
-
 async def get_brock(c: CallbackQuery, state: FSMContext, config, lang):
     res = await get_regions(config)
     await state.update_data(brock=c.data)
@@ -147,11 +142,6 @@ async def get_region(c: CallbackQuery, state: FSMContext, config):
 
 async def settings(c: CallbackQuery):
     await c.message.edit_text(_("Sozlamalar bo'limi 🛠:"), reply_markup=settings_btns())
-    await UserSettings.choose.set()
-
-
-async def settings_cmd(m: Message):
-    await m.answer(_("Sozlamalar bo'limi 🛠:"), reply_markup=settings_btns())
     await UserSettings.choose.set()
 
 
@@ -202,15 +192,6 @@ async def cats(c: CallbackQuery, lang, config):
     await UserCatalogState.get_glob_cat.set()
 
 
-async def cats_cmd(m: Message, lang, config):
-    res = await get_cats(config, "glob")
-    if len(res) == 0:
-        return await m.answer(_("Tovarlar qo'shilmagan ❌"), reply_markup=back_kb)
-    await m.answer(_("Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan mahsulotni "
-                     "toifasi bo'yicha topishingiz mumkin 📃"), reply_markup=kb_constructor(res, lang))
-    await UserCatalogState.get_glob_cat.set()
-
-
 async def get_glob_cat(c: CallbackQuery, lang, config, state: FSMContext):
     await state.update_data(glob_cat_id=c.data)
     res = await get_cats(config, "cat", c.data)
@@ -233,34 +214,36 @@ async def get_cat(c: CallbackQuery, lang, config, state: FSMContext):
 
 async def get_sub_cat(c: CallbackQuery, lang, config, state: FSMContext):
     res = await get_list_prods(c.data, config)
-    await state.update_data(sub_cat_id=c.data)
     if len(res) == 0:
         return await c.answer(_("Tovarlar qo'shilmagan ❌"))
     text, analogs = txt(res, lang)
+    await state.update_data(sub_cat_id=c.data, analogs=analogs)
     if len(text) > 4096:
+        await c.message.delete()
         for x in range(0, len(text), 4096):
-            await c.message.edit_text(text[x:x + 4096], reply_markup=prod_btns(analogs) if x+4096 == len(text) else None)
+            await c.message.answer(text[x:x + 4096])
+        await c.message.answer(_("tanlang 👆"), reply_markup=prod_btns(analogs))
     else:
         await c.message.edit_text(text, reply_markup=prod_btns(analogs))
     await UserCatalogState.next()
 
 
-async def get_analog(c: CallbackQuery, config, lang):
-    if len(list(c.data)) == 0:
+async def get_analog(c: CallbackQuery, state: FSMContext, config, lang):
+    data = await state.get_data()
+    if len(data["analogs"]) == 0:
         return await c.answer(_("Analoglar topilmadi 😔"))
-    res = await get_analogs(config, list(c.data))
-    print(res)
-    text, analog  = txt(res, lang)
-    await c.message.edit_text(text, reply_markup=analog_kb())
+    await c.message.edit_text(_("Analogni tanlang 👇"), reply_markup=analog_kb(data["analogs"]))
+    await UserCatalogState.next()
+
+
+async def get_analog_type_cat(c: CallbackQuery, config, lang):
+    res = await get_analog_type_api(config, c.data)
+    text, analogs = txt(res, lang)
+    await c.message.edit_text(text, reply_markup=back_kb)
 
 
 async def search(c: CallbackQuery):
     await c.message.edit_text(_("Qidirayotgan mahsoltingizni kiriting 🔎"), reply_markup=back_kb)
-    await UserSearch.get_name.set()
-
-
-async def search_cmd(m: Message):
-    await m.answer(_("Qidirayotgan mahsoltingizni kiriting 🔎"), reply_markup=back_kb)
     await UserSearch.get_name.set()
 
 
@@ -276,11 +259,19 @@ async def get_search(m: Message, state: FSMContext, lang, config):
 
 async def get_analog_search(c: CallbackQuery, state: FSMContext, config, lang):
     data = await state.get_data()
-    res = await get_analogs(config, data["analogs"])
-    text, analogs = txt(res, lang)
-    await state.update_data(analogs=analogs)
-    await c.message.edit_text(text, reply_markup=analog_kb(analogs))
+    # res = await get_analogs(config, data["analogs"])
+    # text, analogs = txt(res, lang)
+    # await state.update_data(analogs=analogs)
+    if len(data["analogs"]) == 0:
+        return await c.answer(_("Analoglar topilmadi 😔"))
+    await c.message.edit_text(_("Analogni tanlang 👇"), reply_markup=analog_kb(data["analogs"]))
+    await UserSearch.next()
 
+
+async def get_analog_type(c: CallbackQuery, config, lang):
+    res = await get_analog_type_api(config, c.data)
+    text, analogs = txt(res, lang)
+    await c.message.edit_text(text, reply_markup=back_kb)
 
 
 async def back(c: CallbackQuery, config, lang, state: FSMContext):
@@ -317,11 +308,7 @@ def register_user(dp: Dispatcher):
     dp.register_message_handler(get_code, state=UserStartState.get_code)
     dp.register_callback_query_handler(get_role, state=UserStartState.get_role)
     dp.register_callback_query_handler(settings, Text(equals="settings"), state=UserMenuState.get_menu)
-    dp.register_message_handler(settings_cmd, commands=["settings"], state=UserMenuState.get_menu)
-    dp.register_message_handler(cats_cmd, commands=["catalog"], state=UserMenuState.get_menu)
     dp.register_message_handler(feedback_cmd, commands=["feedback"], state=UserMenuState.get_menu)
-    dp.register_message_handler(bonus_cmd, commands=["bonus"], state=UserMenuState.get_menu)
-    dp.register_message_handler(search_cmd, commands=["search"], state=UserMenuState.get_menu)
     dp.register_callback_query_handler(feedback, Text(equals="feedback"), state=UserMenuState.get_menu)
     dp.register_callback_query_handler(bonus, Text(equals="services"), state=UserMenuState.get_menu)
     dp.register_callback_query_handler(get_brock, BackFilter(), state=UserBonus.get_brock)
@@ -338,9 +325,11 @@ def register_user(dp: Dispatcher):
     dp.register_callback_query_handler(get_sub_cat, BackFilter(), state=UserCatalogState.get_sub_cat)
     dp.register_callback_query_handler(get_analog, BackFilter(), state=UserCatalogState.get_analog)
     dp.register_callback_query_handler(get_analog_search, BackFilter(), state=UserSearch.get_analog)
+    dp.register_callback_query_handler(get_analog_type, BackFilter(), state=UserSearch.get_analog_type)
+    dp.register_callback_query_handler(get_analog_type_cat, BackFilter(), state=UserCatalogState.get_analog_type)
     dp.register_callback_query_handler(search, Text(equals="search"), state=UserMenuState.get_menu)
     dp.register_message_handler(get_search, state=[UserMenuState.get_menu, UserCatalogState.get_glob_cat,
                                                    UserCatalogState.get_cat, UserCatalogState.get_sub_cat,
                                                    UserCatalogState.get_analog, UserSearch.get_name,
-                                                   UserSearch.get_analog])
+                                                   UserSearch.get_analog, UserSearch.get_analog_type])
     dp.register_callback_query_handler(back, Text(startswith="back"), state="*")

@@ -14,10 +14,11 @@ role_kb = InlineKeyboardMarkup(row_width=1).add(
 
 main_menu_kb = InlineKeyboardMarkup(row_width=2).add(
     InlineKeyboardButton(_("Qidruv 🔎"), callback_data="search"),
-#    InlineKeyboardButton(_("Xizmatlar (bonus) 🚚 "), callback_data="services"),
+    #    InlineKeyboardButton(_("Xizmatlar (bonus) 🚚 "), callback_data="services"),
     InlineKeyboardButton(_("Katalog 📖"), callback_data="catalog"),
     InlineKeyboardButton(_("Sozlamalar ⚙️"), callback_data="settings"),
     InlineKeyboardButton(_("Izoh qoldirish ✏"), callback_data="feedback"))
+
 
 def settings_btns(locale=None):
     settings_kb = InlineKeyboardMarkup(row_width=1)
@@ -52,21 +53,23 @@ def prod_btns(analogs=False):
     kb = InlineKeyboardMarkup(row_width=1)
     kb.add(InlineKeyboardButton(_("Analoglar 🗄"), callback_data="analog"),
            InlineKeyboardButton(_("🔙 Orqaga"), callback_data="back_sub"),
-                                   InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
+           InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
     return kb
 
+
 def analog_kb(analogs):
-    kbs = InlineKeyboardMarkup(row_width=1)
+    kbs = InlineKeyboardMarkup(row_width=3)
     for analog in analogs:
         kbs.insert(InlineKeyboardButton(text=analog, callback_data=analog))
     kbs.add(InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))
     return kbs
 
 
-def kb_constructor(cats, lang, c_d="back"):
+def kb_constructor(cats, lang, c_d="back", is_analog=False):
     btn = InlineKeyboardMarkup(row_width=1)
     for cat in cats:
-        btn.insert(InlineKeyboardButton(cat[f'name_{lang}'], callback_data=cat['id']))
+        btn.insert(InlineKeyboardButton(cat[f'name_{lang}'] if not is_analog else cats[cat],
+                                        callback_data=cat['id'] if not is_analog else cats[cat]))
     btn.insert(InlineKeyboardButton(_("🔙 Orqaga"), callback_data=c_d))
     if c_d != "back":
         btn.insert(InlineKeyboardButton(_("🏠 Bosh menuga qaytish"), callback_data="back"))

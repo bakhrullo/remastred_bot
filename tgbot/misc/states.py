@@ -34,8 +34,11 @@ class UserCatalogState(StatesGroup):
     get_cat = State()
     get_sub_cat = State()
     get_analog = State()
+    get_analog_type = State()
+
 
 
 class UserSearch(StatesGroup):
     get_name = State()
     get_analog = State()
+    get_analog_type = State()
