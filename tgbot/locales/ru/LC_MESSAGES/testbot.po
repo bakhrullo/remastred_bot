@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-10-25 16:34+0000\n"
+"POT-Creation-Date: 2023-11-09 00:54+0500\n"
 "PO-Revision-Date: 2023-07-01 17:15+0500\n"
 "Last-Translator: \n"
 "Language: ru\n"
@@ -19,23 +19,28 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: handlers/user.py:25 handlers/user.py:47
+#: handlers/echo.py:10 handlers/echo.py:14
+msgid "/start tugmasini bosing!"
+msgstr "нажмите на /start"
+
+#: handlers/user.py:25 handlers/user.py:51
 msgid "Iltimos ismingizni kiriting 👤"
 msgstr "Пожалуйста, введите ваше имя 👤"
 
-#: handlers/user.py:28 handlers/user.py:53
+#: handlers/user.py:28 handlers/user.py:57
 msgid "Iltimos telefon raqamingizni kiriting yoki tugmacha orqali yuboring 📲"
 msgstr "Пожалуйста, введите свой номер телефона или отправьте через кнопку 📲"
 
-#: handlers/user.py:32 handlers/user.py:73
+#: handlers/user.py:32 handlers/user.py:77
 msgid "O'z sohangizni tanlang 👇"
 msgstr "Выберите свой род деятельности 👇"
 
-#: handlers/user.py:35 handlers/user.py:82 handlers/user.py:287
+#: handlers/user.py:35 handlers/user.py:39 handlers/user.py:86
+#: handlers/user.py:280
 msgid "Bosh menuga xush kelibsiz. Bo'limlar bilan tanishing! 👇"
 msgstr "Добро пожаловать в главное меню. Знакомьтесь с отделами! 👇"
 
-#: handlers/user.py:39
+#: handlers/user.py:43
 msgid ""
 "Assalomu alaykum 👋\n"
 "Botimizga xush kelibsiz iltimos tilni tanlang!"
@@ -43,11 +48,11 @@ msgstr ""
 "Привет 👋\n"
 "Добро пожаловать в наш бот, пожалуйста, выберите язык!"
 
-#: handlers/user.py:65 handlers/user.py:180
+#: handlers/user.py:69 handlers/user.py:170
 msgid "Iltimos telefon raqamingizga kelgan sms kodni kiriting 📲"
 msgstr "Пожалуйста, введите SMS-код, полученный на ваш номер телефона 📲"
 
-#: handlers/user.py:88 handlers/user.py:95
+#: handlers/user.py:92 handlers/user.py:99
 msgid ""
 "Bu bo'limda siz bizga izoh yozib qoldirishingiz mumkin, biz izoh bilan "
 "tanishib chiqib siz bilan bog'lanamiz ⏳"
@@ -55,11 +60,11 @@ msgstr ""
 "В этом разделе вы можете написать нам комментарий, мы свяжемся с вами "
 "после ознакомления с комментарием ⏳"
 
-#: handlers/user.py:106
+#: handlers/user.py:110
 msgid "Izohingiz uchun rahmat!"
 msgstr "Спасибо за ваш комментарий!"
 
-#: handlers/user.py:112 handlers/user.py:121
+#: handlers/user.py:116
 msgid ""
 "Siz xizmatlar bo'limidasiz! Bu bo'lim alohida bo'lim hisoblanib, bu yerda"
 " siz mushkulingizni yengil qiluvchi xizmat turlarining raqamlari va ular "
@@ -69,40 +74,40 @@ msgstr ""
 " где у вас будет возможность получить номера и информацию об услугах, "
 "которые облегчат вашу проблему. Познакомьтесь с ними 👇"
 
-#: handlers/user.py:131
+#: handlers/user.py:126
 msgid "Viloyatingizni tanlang"
 msgstr "Выберите свой регион"
 
-#: handlers/user.py:139
+#: handlers/user.py:134
 msgid "Ma'lumotlar topilmadi"
 msgstr "Данные не найдены"
 
-#: handlers/user.py:149 handlers/user.py:154 handlers/user.py:189
+#: handlers/user.py:144 handlers/user.py:179
 msgid "Sozlamalar bo'limi 🛠:"
 msgstr "Раздел настроек 🛠:"
 
-#: handlers/user.py:159
+#: handlers/user.py:149
 msgid "Tilni tanlang!"
 msgstr "Выберите ваш язык!"
 
-#: handlers/user.py:167
+#: handlers/user.py:157
 msgid "Til o'zgartirildi!"
 msgstr "Язык изменен!"
 
-#: handlers/user.py:172
+#: handlers/user.py:162
 msgid "Iltimos telefon raqamingizni yuboring 📲"
 msgstr "Пожалуйста, пришлите свой номер телефона 📲"
 
-#: handlers/user.py:188
+#: handlers/user.py:178
 msgid "Raqamingiz o'zgartirildi"
 msgstr "Ваш номер был изменен"
 
-#: handlers/user.py:198 handlers/user.py:208 handlers/user.py:218
-#: handlers/user.py:228 handlers/user.py:238
+#: handlers/user.py:188 handlers/user.py:199 handlers/user.py:209
+#: handlers/user.py:218
 msgid "Tovarlar qo'shilmagan ❌"
 msgstr "Товар не добавлен ❌"
 
-#: handlers/user.py:199 handlers/user.py:209 handlers/user.py:292
+#: handlers/user.py:189 handlers/user.py:285
 msgid ""
 "Katalog bo'limiga xush kelibsiz Siz bu yerda o'zingizga kerakli bo'lgan "
 "mahsulotni toifasi bo'yicha topishingiz mumkin 📃"
@@ -110,29 +115,37 @@ msgstr ""
 "Добро пожаловать в раздел каталога, здесь вы можете найти нужный вам "
 "товар по категориям 📃"
 
-#: handlers/user.py:219 handlers/user.py:229 handlers/user.py:296
-#: handlers/user.py:302
+#: handlers/user.py:200 handlers/user.py:210 handlers/user.py:289
+#: handlers/user.py:295
 msgid "Bo'limi tanlang 👇"
 msgstr "Выберите модель 👇"
 
-#: handlers/user.py:250 handlers/user.py:278
+#: handlers/user.py:225
+msgid "tanlang 👆"
+msgstr "Выберите модель 👇"
+
+#: handlers/user.py:234 handlers/user.py:266
 msgid "Analoglar topilmadi 😔"
 msgstr "Ничего не найдено ☹️"
 
-#: handlers/user.py:258 handlers/user.py:263
+#: handlers/user.py:235 handlers/user.py:267
+msgid "Analogni tanlang 👇"
+msgstr "Выберите модель 👇"
+
+#: handlers/user.py:246
 msgid "Qidirayotgan mahsoltingizni kiriting 🔎"
 msgstr "Введите продукт, который вы ищете 🔎"
 
-#: handlers/user.py:270
+#: handlers/user.py:253
 msgid "Hech nima topilmadi ☹️"
 msgstr "Ничего не найдено ☹️"
 
-#: handlers/user.py:306
+#: handlers/user.py:299
 msgid "Bo'limni tanlang 👇"
 msgstr "Выберите модель 👇"
 
-#: keyboards/inline.py:7 keyboards/inline.py:27 keyboards/inline.py:36
-#: keyboards/inline.py:53 keyboards/inline.py:58 keyboards/inline.py:65
+#: keyboards/inline.py:7 keyboards/inline.py:28 keyboards/inline.py:37
+#: keyboards/inline.py:55 keyboards/inline.py:73
 msgid "🔙 Orqaga"
 msgstr "🔙 Назад"
 
@@ -142,7 +155,7 @@ msgstr "Производитель 👷‍♀️"
 
 #: keyboards/inline.py:12
 msgid "Ikkalasi ham 👨‍💻️"
-msgstr "Оба 👨💻""
+msgstr "Оба 👨💻\""
 
 #: keyboards/inline.py:13
 msgid "Xaridor  👨️"
@@ -156,7 +169,7 @@ msgstr "Поиск 🔎"
 msgid "Katalog 📖"
 msgstr "Каталог 📖"
 
-#: keyboards/inline.py:19 keyboards/inline.py:46
+#: keyboards/inline.py:19 keyboards/inline.py:47
 msgid "Sozlamalar ⚙️"
 msgstr "🛠 Настройки"
 
@@ -164,23 +177,23 @@ msgstr "🛠 Настройки"
 msgid "Izoh qoldirish ✏"
 msgstr "Оставьте комментарий ✏"
 
-#: keyboards/inline.py:25
+#: keyboards/inline.py:26
 msgid "🔄 Tilni o'zgartirish"
 msgstr "🔄 Изменить язык"
 
-#: keyboards/inline.py:26
+#: keyboards/inline.py:27
 msgid "📞 Telefon raqamni o'zgartirish"
 msgstr "📞 Изменить номер телефона"
 
-#: keyboards/inline.py:45
+#: keyboards/inline.py:46
 msgid "Siz uchun maxsus 🎁"
 msgstr "Специально для вас 🎁"
 
-#: keyboards/inline.py:52
+#: keyboards/inline.py:54
 msgid "Analoglar 🗄"
 msgstr "Аналоги 🗄"
 
-#: keyboards/inline.py:54 keyboards/inline.py:59 keyboards/inline.py:67
+#: keyboards/inline.py:56 keyboards/inline.py:64 keyboards/inline.py:75
 msgid "🏠 Bosh menuga qaytish"
 msgstr "🏠 Главное меню"
 
@@ -188,7 +201,7 @@ msgstr "🏠 Главное меню"
 msgid "Kontaktni yuborish 📱"
 msgstr "Отправить контакт 📱"
 
-#: services/generate_txt.py:11
+#: services/generate_txt.py:14
 msgid ""
 "🆔 Mahsulot nomi: {name}\n"
 "📍 Ishlab chiqarilgan davalat: {region}\n"
